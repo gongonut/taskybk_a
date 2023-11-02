@@ -53,7 +53,7 @@ export class Staff {
     active?: boolean;
 
     @Prop({unique: true})
-    email: string;
+    email?: string;
 
     @Prop()
     legal_age?: boolean;
@@ -67,7 +67,8 @@ export class Staff {
     @Prop()
     tag?: string; // Información no importante 1: edit; 2: delete;
 
-  
+    @Prop()
+    rol?: string[];  
 }
 
 export const StaffSchema = SchemaFactory.createForClass(Staff);

@@ -13,7 +13,9 @@ import { PollExecuteModule } from './poll-execute/poll-execute.module';
 import { PollsGroupModule } from './polls-group/polls-group.module';
 import { StaffModule } from './staff/staff.module';
 import { CompanyModule } from './company/company.module';
-
+import { PollresultModule } from './pollresult/pollresult.module';
+import { ChatGateway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [ConfigModule.forRoot(),
@@ -23,8 +25,10 @@ import { CompanyModule } from './company/company.module';
     PollsGroupModule,
     StaffModule,
     CompanyModule,
+    PollresultModule,
+    ChatModule
     ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}

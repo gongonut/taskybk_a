@@ -3,7 +3,7 @@ import { PollExecuteService } from './poll-execute.service';
 import { CreatePollExecuteDto } from './dto/create-poll-execute.dto';
 import { UpdatePollExecuteDto } from './dto/update-poll-execute.dto';
 
-@Controller('poll-execute')
+@Controller('pollexec')
 export class PollExecuteController {
   constructor(private readonly pollExecuteService: PollExecuteService) {}
 

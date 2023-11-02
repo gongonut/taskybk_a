@@ -25,12 +25,13 @@ export class StaffService {
       updateStaffDto.names = process.env.MASTER_EMAIL;
       // let id = ObjectId  isValidObjectId(process.env.MASTER_EMAIL);
       const query = {email: process.env.MASTER_EMAIL}
+      // Por ahora agrego password pero en el futuro podrá ser solo el correo
       const options = { upsert: true, new: true, setDefaultsOnInsert: true };
       return await this.staffModel.findOneAndUpdate(query, updateStaffDto, options);
       // return this. update(id, updateStaffDto);
     }
     // ......................
-    return await this.staffModel.findById({ email }).exec();
+    return await this.staffModel.findOne({ email: email }).exec();
   }
 
   // ........................................

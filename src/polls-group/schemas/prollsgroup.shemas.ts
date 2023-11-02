@@ -3,73 +3,116 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 // import { OnStartEnd } from 'src/datatypes';
 
-export type PollGrpDocument = HydratedDocument<PollsGroup>;
+export type PollGrpDocument = HydratedDocument<PollGroup>;
 
 @Schema()
-export class PollsGroup {
-
-    @Prop({unique: true})
-    id: string;
+export class PollGroup {
 
     @Prop()
-    name: string; // Si empresa: Nombre empresa
+    active?: boolean;
 
-    @Prop()
-    client_id?: string; // Si es empresa
-
-    @Prop()
-    client_logo?: string;
-    // name?: string; // Si es empresa
-
-    @Prop()
-    contacName?: string;
-
-    @Prop()
-    phones?: string;
-    
     @Prop()
     age_from?: number;
 
     @Prop()
     age_to?: number;
 
-    @Prop([Object])
-    pollList: object[];
+    @Prop()
+    age?: number;
 
     @Prop()
-    staffList: string[]; // Los Ids del staff
-
-    @Prop()
-    active?: boolean;
-
-    @Prop([Object])
     children: object[];
+
+    @Prop()
+    client_id?: string; // Si es empresa
+
+    @Prop()
+    client_logo?: string;
+
+    @Prop()
+    contact_name?: string;
+
+    @Prop()
+    controlList?: object[];
+
+    @Prop()
+    date_end?: number;
+
+    @Prop()
+    date_ini?: number;
+
+    @Prop()
+    description?: string;
+
+    @Prop()
+    done: boolean; // Se usa en el tasker como referencia
+
+    @Prop()
+    endtimer?: number; // Duración de la entrevista
+
+    @Prop()
+    executed?: number; // Ejecutadas
+
+    @Prop()
+    flags?: string; // Por ejemplo DEL significa borrar
+
+    /*
+    @Prop()
+    fromIndex?: string; // Por ejemplo DEL significa borrar
+    */
+    @Prop()
+    geolocation?: string[];
+
+    @Prop()
+    id: string;
+
+    @Prop()
+    model_name?: string; // Si es empresa
+
+    @Prop()
+    name: string; // Si empresa: Nombre empresa
+
+    @Prop({ type: Object })
+    onEnd?: any;
+
+    @Prop({ type: Object })
+    onStart?: any;
 
     @Prop()
     parentRootNodeId?: string;
 
     @Prop()
+    payxpoll: number; // Pago por encuesta
+
+    @Prop()
+    phones?: string;
+
+    @Prop()
+    pollList: object[];
+
+    @Prop()
+    pollResultId?: string;
+    
+    @Prop()
+    ref: boolean; // En true consultar la base de datos
+
+    @Prop()
     skills: string[]; // Lista de habilidades requeridas
 
     @Prop()
-    geolocation?: string[];
-
-    @Prop()
-    studyLevel?: number; // 0: sin estudio; 1: colegio; 2: universitario;
+    staffList: string[]; // Los Ids del staff
 
     @Prop()
     stars?: number; // Minimo de estrellas del staff
 
     @Prop()
-    ref: boolean; // En true consultar la base de datos
+    studyLevel?: number; // 0: sin estudio; 1: colegio; 2: universitario;
 
-    /*
-    @Prop({ type: {}, default: null })
-    onStart?: OnStartEnd;
-
-    @Prop({ type: {}, default: null })
-    onEnd?: OnStartEnd;
-    */
+    @Prop()
+    total?: number; // Total de encuestas requeridas
+    
+    @Prop()
+    exported: boolean;
 }
 
-export const PollsGrpSchema = SchemaFactory.createForClass(PollsGroup);
+export const PollsGrpSchema = SchemaFactory.createForClass(PollGroup);

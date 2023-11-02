@@ -1,131 +1,115 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+/* eslint-disable prettier/prettier */
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
+// import { OnStartEnd } from 'src/datatypes';
 
-export class CreatePollExecuteDto {
+export type PollExecuteDocument = HydratedDocument<PollExecute>;
 
-    @IsOptional()
-    @IsBoolean()
+@Schema()
+export class PollExecute {
+
+    @Prop()
     active?: boolean;
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     age_from?: number;
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     age_to?: number;
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     age?: number;
 
-    @IsOptional()
+    @Prop()
     chats?: object[];
 
-    @IsNotEmpty()
+    @Prop()
     children: object[];
 
-    @IsOptional()
-    @IsString()
+    @Prop()
     client_id?: string; // Si es empresa
 
-    @IsOptional()
-    @IsString()
+    @Prop()
     client_logo?: string;
 
-    @IsOptional()
-    @IsString()
+    @Prop()
     contact_name?: string;
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     date_end?: number;
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     date_ini?: number;
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     description?: string;
 
-    @IsNotEmpty()
-    @IsBoolean()
+    @Prop()
     done: boolean; // Se usa en el tasker como referencia
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     endtimer?: number; // Duración de la entrevista
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     executed?: number; // Ejecutadas
 
-    @IsOptional()
-    @IsString()
+    @Prop()
     flags?: string; // Por ejemplo DEL significa borrar
 
-    @IsOptional()
-    @IsString()
+    @Prop()
     geolocation?: string[];
 
-    @IsNotEmpty()
-    @IsString()
+    @Prop()
     id: string;
 
-    @IsOptional()
-    @IsString()
+    @Prop()
     model_name?: string; // Si es empresa
 
-    @IsNotEmpty()
-    @IsString()
+    @Prop()
     name: string; // Si empresa: Nombre empresa
 
-    @IsOptional()
-    onEnd?: object;
+    @Prop({ type: Object })
+    onEnd?: any;
 
-    @IsOptional()
+    @Prop({ type: Object })
     onStart?: object;
 
-    @IsOptional()
-    @IsString()
+    @Prop()
     parentRootNodeId?: string;
 
-    @IsNotEmpty()
-    @IsNumber()
+    @Prop()
     payxpoll: number; // Pago por encuesta
 
-    @IsOptional()
-    @IsString()
+    @Prop()
     phones?: string;
 
-    @IsNotEmpty()
-    @IsString()
+    @Prop()
     pollList: object[];
 
-    @IsOptional()
-    @IsString()
+    @Prop()
     pollResultId?: string;
     
-    @IsNotEmpty()
-    @IsBoolean()
+    @Prop()
     ref: boolean; // En true consultar la base de datos
 
-    @IsNotEmpty()
+    @Prop()
     skills: string[]; // Lista de habilidades requeridas
 
-    @IsNotEmpty()
+    @Prop()
     staffList: string[]; // Los Ids del staff
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     stars?: number; // Minimo de estrellas del staff
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     studyLevel?: number; // 0: sin estudio; 1: colegio; 2: universitario;
 
-    @IsOptional()
-    @IsNumber()
+    @Prop()
     total?: number; // Total de encuestas requeridas
+
+    @Prop()
+    isheader: boolean;
     
 }
+
+export const PollsExecuteSchema = SchemaFactory.createForClass(PollExecute);

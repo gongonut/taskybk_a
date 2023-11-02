@@ -3,20 +3,24 @@ import { CreatePollsGroupDto } from './dto/create-polls-group.dto';
 import { UpdatePollsGroupDto } from './dto/update-polls-group.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { PollsGroup } from './schemas/prollsgroup.shemas';
+import { PollGroup } from './schemas/prollsgroup.shemas';
 
 @Injectable()
 export class PollsGroupService {
 
-  constructor (@InjectModel(PollsGroup.name) private plgpModel: Model<PollsGroup>) {}
+  constructor (@InjectModel(PollGroup.name) private plgpModel: Model<PollGroup>) {}
 
-  async create(createPollsGroupDto: CreatePollsGroupDto): Promise<PollsGroup> {
+  async create(createPollsGroupDto: CreatePollsGroupDto): Promise<PollGroup> {
     const createdPlgrp = await new this.plgpModel(createPollsGroupDto);
     return createdPlgrp.save();
   }
 
-  async findById(id: string): Promise<PollsGroup> {
-    return await this.plgpModel.findById(id).exec();
+  async findById(id: string): Promise<PollGroup> {
+    return await this.plgpModel.findOne({id}).exec();
+  }
+
+  async findByExported(): Promise<PollGroup[]> {
+    return await this.plgpModel.find({ 'exported': true }).exec();
   }
 
   async update(id: string, updatePollsGroupDto: UpdatePollsGroupDto) {

@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePollExecuteDto } from './dto/create-poll-execute.dto';
 import { UpdatePollExecuteDto } from './dto/update-poll-execute.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { PollExecute,  } from './schemas/poll-execute.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PollExecuteService {
-  create(createPollExecuteDto: CreatePollExecuteDto) {
-    return 'This action adds a new pollExecute';
+
+  constructor (@InjectModel(PollExecute.name) private plgpModel: Model<PollExecute>) {}
+
+  async create(createPollExecuteDto: CreatePollExecuteDto) {
+    const createdPlgrp = await new this.plgpModel(createPollExecuteDto);
+    return createdPlgrp.save();
   }
 
   findAll() {

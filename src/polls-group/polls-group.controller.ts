@@ -17,6 +17,11 @@ export class PollsGroupController {
     return this.pollsGroupService.findById(id);
   }
 
+  @Get()
+  findExported() {
+    return this.pollsGroupService.findByExported();
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updatePollsGroupDto: UpdatePollsGroupDto) {
     return this.pollsGroupService.update(id, updatePollsGroupDto);

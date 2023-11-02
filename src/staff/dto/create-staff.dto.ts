@@ -50,7 +50,7 @@ export class CreateStaffDto {
 
     @IsNotEmpty()
     @IsString()
-    email: string;
+    email?: string;
 
     @IsBoolean()
     legal_age?: boolean;
@@ -63,4 +63,8 @@ export class CreateStaffDto {
 
     @IsString()
     tag?: string; // Información no importante 1: edit; 2: delete;
+
+    @IsOptional()
+    rol?: string[]
+
 }

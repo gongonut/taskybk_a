@@ -2,31 +2,11 @@ import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-val
 // import { OnStartEnd } from "src/datatypes";
 
 export class CreatePollsGroupDto {
-    @IsNotEmpty()
-    @IsString()
-    id: string;
-
-    @IsNotEmpty()
-    @IsString()
-    name: string; // Si empresa: Nombre empresa
-
-    @IsOptional()
-    @IsString()
-    client_id?: string; // Si es empresa
-
-    @IsOptional()
-    @IsString()
-    client_logo?: string;
-    // name?: string; // Si es empresa
-
-    @IsOptional()
-    @IsString()
-    contacName?: string;
-
-    @IsOptional()
-    @IsString()
-    phones?: string;
     
+    @IsOptional()
+    @IsBoolean()
+    active?: boolean;
+
     @IsOptional()
     @IsNumber()
     age_from?: number;
@@ -35,28 +15,115 @@ export class CreatePollsGroupDto {
     @IsNumber()
     age_to?: number;
 
-    @IsNotEmpty()
-    pollList: object[];
-
-    @IsNotEmpty()
-    staffList: string[]; // Los Ids del staff
-
     @IsOptional()
-    @IsBoolean()
-    active?: boolean;
+    @IsNumber()
+    age?: number;
 
     @IsNotEmpty()
     children: object[];
 
     @IsOptional()
     @IsString()
+    client_id?: string; // Si es empresa
+
+    @IsOptional()
+    @IsString()
+    client_logo?: string;
+
+    @IsOptional()
+    @IsString()
+    contact_name?: string;
+
+    @IsOptional()
+    controlList?: object[];
+
+    @IsOptional()
+    @IsNumber()
+    date_end?: number;
+
+    @IsOptional()
+    @IsNumber()
+    date_ini?: number;
+
+    @IsOptional()
+    @IsNumber()
+    description?: string;
+
+    @IsNotEmpty()
+    @IsBoolean()
+    done: boolean; // Se usa en el tasker como referencia
+
+    @IsOptional()
+    @IsNumber()
+    endtimer?: number; // Duración de la entrevista
+
+    @IsOptional()
+    @IsNumber()
+    executed?: number; // Ejecutadas
+
+    @IsOptional()
+    @IsString()
+    flags?: string; // Por ejemplo DEL significa borrar
+
+    /*
+    @IsNotEmpty()
+    @IsBoolean()
+    fromIndex: boolean;
+    */
+    @IsOptional()
+    @IsString()
+    geolocation?: string[];
+
+    @IsNotEmpty()
+    @IsString()
+    id: string;
+
+    @IsOptional()
+    @IsString()
+    model_name?: string; // Si es empresa
+
+    @IsNotEmpty()
+    @IsString()
+    name: string; // Si empresa: Nombre empresa
+
+    @IsOptional()
+    onEnd?: object;
+
+    @IsOptional()
+    onStart?: object;
+
+    @IsOptional()
+    @IsString()
     parentRootNodeId?: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    payxpoll: number; // Pago por encuesta
+
+    @IsOptional()
+    @IsString()
+    phones?: string;
+
+    @IsNotEmpty()
+    pollList: object[];
+
+    @IsOptional()
+    @IsString()
+    pollResultId?: string;
+    
+    @IsNotEmpty()
+    @IsBoolean()
+    ref: boolean; // En true consultar la base de datos
 
     @IsNotEmpty()
     skills: string[]; // Lista de habilidades requeridas
 
+    @IsNotEmpty()
+    taskerList: string[]; // Los Ids del staff
+
     @IsOptional()
-    geolocation?: string[];
+    @IsNumber()
+    stars?: number; // Minimo de estrellas del staff
 
     @IsOptional()
     @IsNumber()
@@ -64,18 +131,10 @@ export class CreatePollsGroupDto {
 
     @IsOptional()
     @IsNumber()
-    stars?: number; // Minimo de estrellas del staff
+    total?: number; // Total de encuestas requeridas
 
     @IsNotEmpty()
     @IsBoolean()
-    ref: boolean; // En true consultar la base de datos
-
-    /*
-    @IsOptional()
-    onStart?: object;
-
-    @IsOptional()
-    onEnd?: object;
-    */
-
+    exported: boolean;
+    
 }

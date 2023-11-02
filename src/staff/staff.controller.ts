@@ -17,18 +17,17 @@ export class StaffController {
     return this.staffService.login(updateStaffDto);
   }
 
-  @Get()
+  @Get('filter/data?')
   findByQuery(@Query() filterQuery) {
-    const { queryType, data } = filterQuery;
-    const adata = JSON.parse(data);
+    const { queryType, active, stars } = filterQuery;
+    // const adata = JSON.parse(data);
     switch (queryType) {
-      case 0: // Active
-        return this.staffService.findByActive(adata);
+      case 1: // Active
+        return this.staffService.findByActive(active);
         break;
-      case 1: // stars
-        return this.staffService.findByStars(adata);
+      case 2: // stars
+        return this.staffService.findByStars(stars);
         break;
-
     }
     return this.staffService.findAll();
   }
