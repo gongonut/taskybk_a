@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, Put, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, Put, UseInterceptors, UploadedFiles, Res } from '@nestjs/common';
 import { PollresultService } from './pollresult.service';
 import { CreatePollresultDto } from './dto/create-pollresult.dto';
 import { UpdatePollresultDto } from './dto/update-pollresult.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as fs from 'fs';
+import { Observable, of } from 'rxjs';
 
 @Controller('pollresult')
 export class PollresultController {
@@ -68,6 +69,17 @@ export class PollresultController {
       fs.writeFileSync(apath, image.buffer);
     })
     return { status: 200, message: apath }
+  }
+
+  @Get('picture/:imagename')
+  getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
+   
+    const upr = imagename.toUpperCase();
+    return of(res.sendFile(join('/files', upr), { root: '.' }));
+    /*
+    const upr = imagename.toUpperCase();
+    return of(res.sendFile(join(__dirname + `${this.IMAGEFOLDER}${upr}`)))
+    */
   }
 
   @Post('pictures2')
