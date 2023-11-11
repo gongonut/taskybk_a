@@ -3,13 +3,14 @@ import { PollsGroupService } from './polls-group.service';
 import { CreatePollsGroupDto } from './dto/create-polls-group.dto';
 import { UpdatePollsGroupDto } from './dto/update-polls-group.dto';
 
+
 @Controller('pollsgrp')
 export class PollsGroupController {
   constructor(private readonly pollsGroupService: PollsGroupService) {}
 
   @Post()
-  create(@Body() createPollsGroupDto: CreatePollsGroupDto) {
-    return this.pollsGroupService.create(createPollsGroupDto);
+  async create(@Body() createPollsGroupDto: CreatePollsGroupDto) {
+    return await this.pollsGroupService.create(createPollsGroupDto);
   }
 
   @Get(':id')
@@ -17,9 +18,14 @@ export class PollsGroupController {
     return this.pollsGroupService.findById(id);
   }
 
-  @Get()
+  @Get('exported')
   findExported() {
     return this.pollsGroupService.findByExported();
+  }
+
+  @Get()
+  findAll() {
+    return this.pollsGroupService.findAll();
   }
 
   @Put(':id')

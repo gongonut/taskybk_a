@@ -9,7 +9,7 @@ import { MailModule } from './mail/mail.module';
 // import { join } from 'path';
 // import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 // import { MailerModule } from '@nestjs-modules/mailer';
-import { PollExecuteModule } from './poll-execute/poll-execute.module';
+
 import { PollsGroupModule } from './polls-group/polls-group.module';
 import { StaffModule } from './staff/staff.module';
 import { CompanyModule } from './company/company.module';
@@ -21,7 +21,7 @@ import { ChatModule } from './chat/chat.module';
   imports: [ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGO_URL),
     MailModule,
-    PollExecuteModule,
+    
     PollsGroupModule,
     StaffModule,
     CompanyModule,

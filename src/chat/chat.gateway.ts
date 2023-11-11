@@ -11,8 +11,10 @@ import { NotifPayLoad } from './entities/notification.entity';
 
 export interface CollectionNotification {
   collection?: string; // PollGroup, PollResult, ...
-  collection_id?: string; /// _id de el elemento en la colección
+  collect_id?: string; /// _id de el elemento en la colección
+  grpName?: string; /// _id de el elemento en la colección
   staff__id?: string; // _id del origen del cambio
+  staffname?: string; // _id del origen del cambio
   date?: number; // Fecha de la actualización
 }
 
@@ -105,6 +107,7 @@ export class ChatGateway
       staff__id: '',
       pollresult_ids: [],
       pollsgroup_ids: [],
+      staff__ids: [],
       socket_id: client.id
     }
     this.upCreated(client.id, updateCard)
@@ -139,22 +142,27 @@ export class ChatGateway
 
   // ..............................................................................................
 
-  handleNotifCMD(collection_name: string, _id: string) {
+  handleNotifCMD(
+    collection: string,
+    collect_id: string,
+    grpName: string,
+    staff__id: string,
+    staffname: string
+  ) {
     // Get list of subscriber clients
     let soketList: string[] = [];
     // TODO: TEMPORAL
     soketList = this.getAllSocketId()
     /*
     soketList = this.getByPollResult(pollResult_id);
-    soketList = [...soketList, ...this.getByPollsGroup(pollsGrp_id)];
+    soketList = [...soketList, ...this.getByPollsGroup(pollGrp_id)];
     */
     if (soketList.length > 0) {
       const payload: CollectionNotification = {
-        collection: collection_name,
-        collection_id: _id,
+        collection, collect_id, grpName, staff__id, staffname,
         date: Date.now()
       }
-      this.server.emit('collection-notificacion', payload);
+      this.server.emit('dtb-notification', payload);
       /*
       soketList.forEach(sock_id => {
         this.server.to(sock_id).emit('collection-notificacion', payload);

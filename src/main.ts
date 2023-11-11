@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule); // para servir html desde Express
 
   app.enableCors({
     origin: ['*'],
@@ -21,6 +23,14 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('documentation', app, document);
+
+  // para servir html desde Express
+  // https://stackoverflow.com/questions/54680459/serving-static-content-alongisde-angular-app
+  app.useStaticAssets(join(__dirname, '..', 'tasker'), { prefix: "/tasker/" });
+  app.useStaticAssets(join(__dirname, '..', 'supplier'), { prefix: "/supplier/" });
+  app.useStaticAssets(join(__dirname, '..', 'page'), { prefix: "/page/" });
+  app.useStaticAssets(join(__dirname, '..', 'tasker'), { prefix: "/" });
+  // app.useStaticAssets(join(__dirname, '..', 'page'), { prefix: "*" });
 
   await app.listen(3000);
 }

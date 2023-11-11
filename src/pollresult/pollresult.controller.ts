@@ -12,7 +12,7 @@ export class PollresultController {
   constructor(private readonly pollresultService: PollresultService) { }
 
   @Post()
-  create(@Body() createPollresultDto: CreatePollresultDto) {
+  async create(@Body() createPollresultDto: CreatePollresultDto) {
     return this.pollresultService.create(createPollresultDto);
   }
 
@@ -24,6 +24,10 @@ export class PollresultController {
     @Query('date_ini') date_ini: number,
     @Query('date_end') date_end: number,
   ) {
+    filter = Number(filter);
+    status = Number(status);
+    date_ini = Number(date_ini);
+    date_end = Number(date_end);
     switch (filter) {
       case 0: // all
         return await this.pollresultService.findByGroup(pollGrp_id);
@@ -36,6 +40,16 @@ export class PollresultController {
         break;
     }
   }
+
+  @Get('analitic/data?')
+  async findByAnalitic(
+    @Query('pollGrp') pollGrp: string,
+    @Query('date_ini') date_ini: number,
+    @Query('date_end') date_end: number,) {
+      const pollGrpList = JSON.parse(pollGrp);
+      // const pollGrpList = parcepgr.split(',');
+      return await this.pollresultService.findByAnalitic(pollGrpList, +date_ini, +date_end);
+    }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
@@ -60,22 +74,46 @@ export class PollresultController {
   @Post('pictures1')
   @UseInterceptors(FilesInterceptor('files'))
   uploadFiles1(@UploadedFiles() files: Array<Express.Multer.File>) {
-    //fs.rmSync(join('files','images'), { recursive: true, force: true });
-    //fs.mkdirSync(join('files', 'images'));
     let apath = '';
+    if (process.env.DEV_STATUS) {
+      apath = join(__dirname, '..', process.env.DEFA_DIR);
+      if (!fs.existsSync(apath)) { fs.mkdirSync(apath); }
+    } else {
+      apath = process.env.DEFA_DIR; // process.env.DEFA_DIR solo esta ruta
+    }
+    const dir = files[0].originalname.toUpperCase();
+    apath = join(apath, dir);
+    if (!fs.existsSync(apath)) { fs.mkdirSync(apath); }
+
+    // apath = join(__dirname, '..', process.env.DEFA_DIR);
+    for (let i = 1; i < files.length; i++) {
+      const upr = files[i].originalname.toUpperCase();
+      const destPath = join(apath, upr);
+      fs.writeFileSync(destPath, files[i].buffer);
+    }
+
+    /*
     files.forEach(async image => {
       const upr = image.originalname.toUpperCase();
-      apath = join(__dirname, '/files' , upr);
-      fs.writeFileSync(apath, image.buffer);
+      const destPath = join(apath , upr);
+      fs.writeFileSync(destPath, image.buffer);
     })
+    */
+
     return { status: 200, message: apath }
   }
 
   @Get('picture/:imagename')
   getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
-   
-    const upr = imagename.toUpperCase();
-    return of(res.sendFile(join('/files', upr), { root: '.' }));
+    const upr = imagename.toUpperCase().split('__');
+    let apath = '';
+    if (process.env.DEV_STATUS) {
+      apath = join(__dirname, '..', process.env.DEFA_DIR, upr[0], upr[1]);
+    } else {
+      apath = join(process.env.DEFA_DIR, upr[0], upr[1]);
+    }
+
+    return of(res.sendFile(apath));
     /*
     const upr = imagename.toUpperCase();
     return of(res.sendFile(join(__dirname + `${this.IMAGEFOLDER}${upr}`)))
@@ -85,12 +123,13 @@ export class PollresultController {
   @Post('pictures2')
   @UseInterceptors(FilesInterceptor('files'))
   uploadFiles2(@UploadedFiles() files: Array<Express.Multer.File>) {
+
     //fs.rmSync(join('files','images'), { recursive: true, force: true });
     //fs.mkdirSync(join('files', 'images'));
     let apath = '';
     files.forEach(async image => {
       const upr = image.originalname.toUpperCase();
-      apath = join('/files' , upr);
+      apath = join('/files', upr);
       fs.writeFileSync(apath, image.buffer);
     })
     return { status: 200, message: apath }

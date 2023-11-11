@@ -53,7 +53,7 @@ export class CreatePollresultDto {
 
     @IsNotEmpty()
     @IsString()
-    pollsGrp_id: string; // _id del PollGroup
+    pollGrp_id: string; // _id del PollGroup
 
     @IsOptional()
     @IsNumber()
@@ -78,10 +78,6 @@ export class CreatePollresultDto {
     @IsOptional()
     @IsNumber()
     staff_star?: number;
-
-    @IsOptional()
-    @IsString()
-    staff_uid?: string;
 
     @IsNotEmpty()
     @IsNumber()

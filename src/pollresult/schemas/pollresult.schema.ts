@@ -44,11 +44,18 @@ export class PollResult {
     @Prop()
     pollGrpName: string;
 
+    // https://www.youtube.com/watch?v=o7dZWGiXcA8
+    // @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'PollGroup'})
     @Prop()
-    pollsGrp_id: string; // _id del PollGroup
+    pollGrp_id: string; // _id del PollGroup
 
     @Prop()
     price?: number;
+
+    // https://www.youtube.com/watch?v=o7dZWGiXcA8
+    // @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Staff'})
+    @Prop()
+    staff_id: string; // _id del Staff
 
     @Prop()
     staff__id?: string; // _id del staff
@@ -64,9 +71,6 @@ export class PollResult {
 
     @Prop()
     staff_star?: number;
-
-    @Prop()
-    staff_uid?: string;
 
     @Prop()
     status_date: number;
