@@ -45,9 +45,9 @@ export class PollResult {
     pollGrpName: string;
 
     // https://www.youtube.com/watch?v=o7dZWGiXcA8
-    // @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'PollGroup'})
+    // @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'PollGroups'})
     @Prop()
-    pollGrp_id: string; // _id del PollGroup
+    pollGrp_id: string; // _id del PollGroups
 
     @Prop()
     price?: number;

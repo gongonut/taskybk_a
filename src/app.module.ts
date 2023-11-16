@@ -18,10 +18,10 @@ import { ChatGateway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(),
+  imports: [
+    ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGO_URL),
     MailModule,
-    
     PollsGroupModule,
     StaffModule,
     CompanyModule,

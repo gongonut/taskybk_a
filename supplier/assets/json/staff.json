@@ -28,13 +28,6 @@
           "validators": { "required": true }
         },
         {
-          "name": "password",
-          "label": "Contraseña",
-          "type": "password",
-          "sideBtn": "visibility",
-          "validators": { "required": true }
-        },
-        {
           "name": "phone",
           "label": "Teléfono",
           "type": "tel",
@@ -46,9 +39,12 @@
           "type": "multiselect",
           "validators": { "required": true },
           "selectOptions": [
-            { "key": "S", "value": "Usuario" },
-            { "key": "P", "value": "Actividades" },
-            { "key": "T", "value": "Tasker" }
+            { "key": "K", "value": "Es Tasker" },
+            { "key": "P", "value": "Es Usuario" },
+            { "key": "F", "value": "Edita tasker" },
+            { "key": "U", "value": "Edita usuaro" },
+            { "key": "D", "value": "Edita directorio" }
+            
           ]
         },
         {

@@ -1,7 +1,5 @@
 import {
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  OnGatewayInit,
+  // OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -10,17 +8,17 @@ import { Server, Socket } from 'socket.io';
 import { NotifPayLoad } from './entities/notification.entity';
 
 export interface CollectionNotification {
-  collection?: string; // PollGroup, PollResult, ...
-  collect_id?: string; /// _id de el elemento en la colección
-  grpName?: string; /// _id de el elemento en la colección
+  collection?: string; // PollGroups, PollResult, ...
+  field_id?: string; /// _id de el elemento en la colección
+  fieldId?: string; /// id de el elemento en la colección
   staff__id?: string; // _id del origen del cambio
-  staffname?: string; // _id del origen del cambio
+  tStaff__id?: string; // nombre del origen del cambio
   date?: number; // Fecha de la actualización
+  data?: any;
 }
 
 @WebSocketGateway(Number(process.env.CHAT_PORT), { cors: { origin: '*' } })
-export class ChatGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway {
 
   @WebSocketServer() server: Server;
   private notification: Array<NotifPayLoad> = [];
@@ -54,6 +52,7 @@ export class ChatGateway
     }
   }
 
+  /*
   getByPollResult(pollresult_id: string): string[] {
     const result = [];
     this.notification.forEach(ntf => {
@@ -69,6 +68,7 @@ export class ChatGateway
     });
     return result;
   }
+  */
 
   create(notif: any) {
     notif.id = Date.now();
@@ -87,38 +87,45 @@ export class ChatGateway
     }
   }
 
-  delete(staff__id: string) {
-    const cardIndex = this.notification.findIndex((c) => c.staff__id === staff__id);
+  delete(socket_id: string) {
+    const cardIndex = this.notification.findIndex((c) => c.socket_id === socket_id);
     if (cardIndex >= 0) {
       this.notification.splice(cardIndex, 1);
     }
   }
 
-  // ..............................................
+  // .............................................................
 
-
-
+  /*
   afterInit(server: any) {
     console.log('Esto se ejecuta cuando inicia')
   }
+  */
 
   handleConnection(client: any, ...args: any[]) {
     const updateCard: NotifPayLoad = {
-      staff__id: '',
-      pollresult_ids: [],
-      pollsgroup_ids: [],
-      staff__ids: [],
       socket_id: client.id
     }
+    this.upCreated(client.id, updateCard);
+    // console.log('Hola alguien se conecto al socket', client.id);
+  }
+
+  @SubscribeMessage('credential')
+  handleCredential(client: Socket, data: any) {
+    const updateCard: NotifPayLoad = {
+      staff__id: data.staff__id,
+      socket_id: client.id,
+      rol: data.rol.split(',')
+    }
     this.upCreated(client.id, updateCard)
-    // console.log('Hola alguien se conecto al socket 👌👌👌');
   }
 
   handleDisconnect(client: any) {
-    console.log('ALguien se fue! chao chao')
+    this.delete(client.id)
+    // console.log('ALguien se fue', client.id)
   }
 
-
+  /*
   @SubscribeMessage('event_join')
   handleJoinRoom(client: Socket, room: string) {
     client.join(`room_${room}`);
@@ -139,15 +146,17 @@ export class ChatGateway
     console.log(`chao room_${room}`)
     client.leave(`room_${room}`);
   }
+  */
 
   // ..............................................................................................
 
   handleNotifCMD(
     collection: string,
-    collect_id: string,
-    grpName: string,
+    field_id: string,
+    fieldId: string,
     staff__id: string,
-    staffname: string
+    tStaff__id: string, // Staff a quien se dirige la accion
+    data: any
   ) {
     // Get list of subscriber clients
     let soketList: string[] = [];
@@ -159,13 +168,14 @@ export class ChatGateway
     */
     if (soketList.length > 0) {
       const payload: CollectionNotification = {
-        collection, collect_id, grpName, staff__id, staffname,
-        date: Date.now()
+        collection, field_id, fieldId, staff__id, tStaff__id,
+        date: Date.now(),
+        data
       }
       this.server.emit('dtb-notification', payload);
       /*
       soketList.forEach(sock_id => {
-        this.server.to(sock_id).emit('collection-notificacion', payload);
+        this.server.to(sock_id).emit('dtb-notification', payload);
       })
       */
     }

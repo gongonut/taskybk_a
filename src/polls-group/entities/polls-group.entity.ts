@@ -1,1 +1,1 @@
-export class PollGroup {}
+export class PollGroups {}

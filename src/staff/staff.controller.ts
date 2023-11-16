@@ -1,12 +1,16 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query, UseGuards } from '@nestjs/common';
 import { StaffService } from './staff.service';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
+import { RolesGuard } from './roles.guard';
+import { Roles } from './roles.decorator';
 
 @Controller('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) { }
 
+  @Roles('Q')
+  @UseGuards(RolesGuard)
   @Post()
   create(@Body() createStaffDto: CreateStaffDto) {
     return this.staffService.create(createStaffDto);

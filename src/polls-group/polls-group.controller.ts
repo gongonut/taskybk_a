@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
 import { PollsGroupService } from './polls-group.service';
 import { CreatePollsGroupDto } from './dto/create-polls-group.dto';
 import { UpdatePollsGroupDto } from './dto/update-polls-group.dto';
-
+import { RolesGuard } from 'src/staff/roles.guard';
+import { Roles } from 'src/staff/roles.decorator';
+import { User } from 'src/staff/user.decorator';
 
 @Controller('pollsgrp')
 export class PollsGroupController {
@@ -13,28 +15,30 @@ export class PollsGroupController {
     return await this.pollsGroupService.create(createPollsGroupDto);
   }
 
-  @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.pollsGroupService.findById(id);
+  @Get('/exp')
+  async findExported() {
+    return await this.pollsGroupService.findByExported();
   }
 
-  @Get('exported')
-  findExported() {
-    return this.pollsGroupService.findByExported();
+  @Roles('D')
+  @UseGuards(RolesGuard)
+  @Get(':id')
+  async findById(@Param('id') id: string, @User() user: any) {
+    return await this.pollsGroupService.findById(id, user);
   }
 
   @Get()
-  findAll() {
-    return this.pollsGroupService.findAll();
+  async findAll() {
+    return await this.pollsGroupService.findAll();
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updatePollsGroupDto: UpdatePollsGroupDto) {
-    return this.pollsGroupService.update(id, updatePollsGroupDto);
+  async update(@Param('id') id: string, @Body() updatePollsGroupDto: UpdatePollsGroupDto) {
+    return await this.pollsGroupService.update(id, updatePollsGroupDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pollsGroupService.remove(id);
+  async remove(@Param('id') id: string) {
+    return await this.pollsGroupService.remove(id);
   }
 }

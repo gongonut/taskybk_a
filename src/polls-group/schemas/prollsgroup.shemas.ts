@@ -3,10 +3,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 // import { OnStartEnd } from 'src/datatypes';
 
-export type PollGrpDocument = HydratedDocument<PollGroup>;
+export type PollGrpDocument = HydratedDocument<PollGroups>;
 
 @Schema()
-export class PollGroup {
+export class PollGroups {
 
     @Prop()
     active?: boolean;
@@ -91,7 +91,7 @@ export class PollGroup {
     pollList: object[];
 
     @Prop()
-    pollResultId?: string;
+    pollResult_id?: string;
     
     @Prop()
     ref: boolean; // En true consultar la base de datos
@@ -100,13 +100,13 @@ export class PollGroup {
     skills: string[]; // Lista de habilidades requeridas
 
     @Prop()
-    staffList: string[]; // Los Ids del staff
-
-    @Prop()
     stars?: number; // Minimo de estrellas del staff
 
     @Prop()
     studyLevel?: number; // 0: sin estudio; 1: colegio; 2: universitario;
+
+    @Prop()
+    taskerList: string[]; // Los Ids del staff
 
     @Prop()
     total?: number; // Total de encuestas requeridas
@@ -115,4 +115,4 @@ export class PollGroup {
     exported: boolean;
 }
 
-export const PollsGrpSchema = SchemaFactory.createForClass(PollGroup);
+export const PollsGrpSchema = SchemaFactory.createForClass(PollGroups);

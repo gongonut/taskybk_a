@@ -53,7 +53,7 @@ export class CreatePollresultDto {
 
     @IsNotEmpty()
     @IsString()
-    pollGrp_id: string; // _id del PollGroup
+    pollGrp_id: string; // _id del PollGroups
 
     @IsOptional()
     @IsNumber()

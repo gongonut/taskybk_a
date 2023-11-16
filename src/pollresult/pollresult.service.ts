@@ -12,14 +12,13 @@ export class PollresultService {
   constructor(
     @InjectModel(PollResult.name) private pollResultModel: Model<PollResult>,
     @Inject(ChatGateway) private chatcmd: ChatGateway,
-  ) {
-
-  }
+  ) { }
 
   async create(createPollresultDto: CreatePollresultDto) {
     const createdPlresult = await new this.pollResultModel(createPollresultDto);
-    const { _id, pollGrpName, staff__id, staff_name } = createdPlresult;
-    await this.chatcmd.handleNotifCMD('pollresult', _id.toString(), pollGrpName, staff__id, staff_name);
+    const { _id, staff__id, pollGrp_id, status } = createdPlresult;
+    const adata = {status, pollGrp_id}
+    await this.chatcmd.handleNotifCMD('pollresult', _id.toString(), '', staff__id, staff__id, adata);
     return createdPlresult.save();
   }
 
@@ -46,10 +45,22 @@ export class PollresultService {
     return await this.pollResultModel.findById(id).exec();
   }
 
-  async update(id: string, updatePollresultDto: UpdatePollresultDto) {
-    const { pollGrpName, staff__id, staff_name } = updatePollresultDto;
-    await this.chatcmd.handleNotifCMD('pollresult', id, pollGrpName, staff__id, staff_name);
+  async update(id: string, updatePollresultDto: UpdatePollresultDto, user: any) {
+    const { staff__id, pollGrp_id, status } = updatePollresultDto;
+    const adata = {status, pollGrp_id}
+    await this.chatcmd.handleNotifCMD('pollresult', id, '', user.staff__id, staff__id, adata);
     return await this.pollResultModel.findByIdAndUpdate(id, updatePollresultDto);
+  }
+
+  async updatePartial(id: string, data: any, user: any) {
+    const { fieldName, staff__id, chats, status, pollGrp_id } = data;
+    if (fieldName === 'status') {
+      const adata = {status, pollGrp_id}
+      await this.chatcmd.handleNotifCMD('pollresult', id, '', user.staff__id, staff__id, adata);
+    } else {
+      await this.chatcmd.handleNotifCMD('chat', id, '', user.staff__id, staff__id, pollGrp_id);
+    }
+    return await this.pollResultModel.findByIdAndUpdate(id, {$set: {chats, status}});
   }
 
   async remove(id: string) {
@@ -90,4 +101,10 @@ export class PollresultService {
     return { status: 200, data: result };
   }
 
+  async getChat(id: string) {
+    const plr = await this.pollResultModel.findById(id).exec();
+    const json = plr.toJSON();
+    // const {chats} = plr;
+    return json.chats;
+  }
 }

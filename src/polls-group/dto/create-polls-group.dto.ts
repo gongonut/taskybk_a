@@ -109,7 +109,7 @@ export class CreatePollsGroupDto {
 
     @IsOptional()
     @IsString()
-    pollResultId?: string;
+    pollResult_id?: string;
     
     @IsNotEmpty()
     @IsBoolean()
@@ -118,9 +118,6 @@ export class CreatePollsGroupDto {
     @IsNotEmpty()
     skills: string[]; // Lista de habilidades requeridas
 
-    @IsNotEmpty()
-    taskerList: string[]; // Los Ids del staff
-
     @IsOptional()
     @IsNumber()
     stars?: number; // Minimo de estrellas del staff
@@ -128,6 +125,9 @@ export class CreatePollsGroupDto {
     @IsOptional()
     @IsNumber()
     studyLevel?: number; // 0: sin estudio; 1: colegio; 2: universitario;
+
+    @IsNotEmpty()
+    taskerList: string[]; // Los Ids del staff
 
     @IsOptional()
     @IsNumber()

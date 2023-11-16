@@ -8,13 +8,13 @@ export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Get()
-  findOne() {
-    return this.companyService.findOne();
+  async findOne() {
+    return await this.companyService.findOne();
   }
 
   @Put()
-  update(@Body() updateGeneralDto: UpdateCompanyDto) {
-    return this.companyService.update(updateGeneralDto);
+  async update(@Body() updateGeneralDto: UpdateCompanyDto) {
+    return await this.companyService.update(updateGeneralDto);
   }
 
 }

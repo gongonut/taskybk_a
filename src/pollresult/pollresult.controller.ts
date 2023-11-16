@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, Put, UseInterceptors, UploadedFiles, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, Put, UseInterceptors, UploadedFiles, Res, UseGuards } from '@nestjs/common';
 import { PollresultService } from './pollresult.service';
 import { CreatePollresultDto } from './dto/create-pollresult.dto';
 import { UpdatePollresultDto } from './dto/update-pollresult.dto';
@@ -6,6 +6,9 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as fs from 'fs';
 import { Observable, of } from 'rxjs';
+import { Roles } from 'src/staff/roles.decorator';
+import { RolesGuard } from 'src/staff/roles.guard';
+import { User } from 'src/staff/user.decorator';
 
 @Controller('pollresult')
 export class PollresultController {
@@ -13,7 +16,7 @@ export class PollresultController {
 
   @Post()
   async create(@Body() createPollresultDto: CreatePollresultDto) {
-    return this.pollresultService.create(createPollresultDto);
+    return await this.pollresultService.create(createPollresultDto);
   }
 
   @Get('filter/data?')
@@ -46,9 +49,14 @@ export class PollresultController {
     @Query('pollGrp') pollGrp: string,
     @Query('date_ini') date_ini: number,
     @Query('date_end') date_end: number,) {
-      const pollGrpList = JSON.parse(pollGrp);
-      // const pollGrpList = parcepgr.split(',');
-      return await this.pollresultService.findByAnalitic(pollGrpList, +date_ini, +date_end);
+    const pollGrpList = JSON.parse(pollGrp);
+    // const pollGrpList = parcepgr.split(',');
+    return await this.pollresultService.findByAnalitic(pollGrpList, +date_ini, +date_end);
+  }
+
+  @Get('chat/:id')
+  async findChat(@Param('id') id: string) {
+      return await this.pollresultService.getChat(id);
     }
 
   @Get(':id')
@@ -61,9 +69,18 @@ export class PollresultController {
     return this.pollresultService.findAll();
   }
 
+  @Roles('R')
+  @UseGuards(RolesGuard)
+  @Put('partial/:id')
+  updatePartial(@Param('id') id: string, @Body() data: any, @User() user: any) {
+    return this.pollresultService.updatePartial(id, data, user);
+  }
+
+  @Roles('R')
+  @UseGuards(RolesGuard)
   @Put(':id')
-  update(@Param('id') id: string, @Body() updatePollresultDto: UpdatePollresultDto) {
-    return this.pollresultService.update(id, updatePollresultDto);
+  update(@Param('id') id: string, @Body() updatePollresultDto: UpdatePollresultDto, @User() user: any) {
+    return this.pollresultService.update(id, updatePollresultDto, user);
   }
 
   @Delete(':id')
