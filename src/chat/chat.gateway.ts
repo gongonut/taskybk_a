@@ -17,9 +17,10 @@ export interface CollectionNotification {
   data?: any;
 }
 
-@WebSocketGateway(Number(process.env.CHAT_PORT), { cors: { origin: '*' } })
+// @WebSocketGateway(Number(process.env.CHAT_PORT), { cors: { origin: '*' } })
+@WebSocketGateway()
 export class ChatGateway {
-
+ 
   @WebSocketServer() server: Server;
   private notification: Array<NotifPayLoad> = [];
 
@@ -107,7 +108,7 @@ export class ChatGateway {
       socket_id: client.id
     }
     this.upCreated(client.id, updateCard);
-    // console.log('Hola alguien se conecto al socket', client.id);
+    console.log('Hola alguien se conecto al socket', client.id);
   }
 
   @SubscribeMessage('credential')
