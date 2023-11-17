@@ -34,7 +34,7 @@ export class PollresultService {
   }
 
   async findByDate(pollGrp_id: string, date_ini: number, date_end: number): Promise<PollResult[]> {
-    return await this.pollResultModel.find({ pollGrp_id, status, date_ini, date_end }).exec();
+    return await this.pollResultModel.find({ pollGrp_id, date_ini, date_end }).exec();
   }
 
   findAll() {

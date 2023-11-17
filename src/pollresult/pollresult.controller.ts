@@ -14,6 +14,72 @@ import { User } from 'src/staff/user.decorator';
 export class PollresultController {
   constructor(private readonly pollresultService: PollresultService) { }
 
+  @Get('picture/:imagename')
+  getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
+    const upr = imagename.toUpperCase().split('__');
+    let apath = '';
+    if (process.env.DEV_STATUS) {
+      apath = join(__dirname, '..', process.env.DEFA_DIR, upr[0], upr[1]);
+    } else {
+      apath = join(process.env.DEFA_DIR, upr[0], upr[1]);
+    }
+
+    return of(res.sendFile(apath));
+    /*
+    const upr = imagename.toUpperCase();
+    return of(res.sendFile(join(__dirname + `${this.IMAGEFOLDER}${upr}`)))
+    */
+  }
+
+  @Post('pictures1')
+  @UseInterceptors(FilesInterceptor('files'))
+  uploadFiles1(@UploadedFiles() files: Array<Express.Multer.File>) {
+    let apath = '';
+    if (process.env.DEV_STATUS) {
+      apath = join(__dirname, '..', process.env.DEFA_DIR);
+      if (!fs.existsSync(apath)) { fs.mkdirSync(apath); }
+    } else {
+      apath = process.env.DEFA_DIR; // process.env.DEFA_DIR solo esta ruta
+    }
+    const dir = files[0].originalname.toUpperCase();
+    apath = join(apath, dir);
+    if (!fs.existsSync(apath)) { fs.mkdirSync(apath); }
+
+    // apath = join(__dirname, '..', process.env.DEFA_DIR);
+    for (let i = 1; i < files.length; i++) {
+      const upr = files[i].originalname.toUpperCase();
+      const destPath = join(apath, upr);
+      fs.writeFileSync(destPath, files[i].buffer);
+    }
+
+    /*
+    files.forEach(async image => {
+      const upr = image.originalname.toUpperCase();
+      const destPath = join(apath , upr);
+      fs.writeFileSync(destPath, image.buffer);
+    })
+    */
+
+    return { status: 200, message: apath }
+  }
+
+  
+
+  @Post('pictures2')
+  @UseInterceptors(FilesInterceptor('files'))
+  uploadFiles2(@UploadedFiles() files: Array<Express.Multer.File>) {
+
+    //fs.rmSync(join('files','images'), { recursive: true, force: true });
+    //fs.mkdirSync(join('files', 'images'));
+    let apath = '';
+    files.forEach(async image => {
+      const upr = image.originalname.toUpperCase();
+      apath = join('/files', upr);
+      fs.writeFileSync(apath, image.buffer);
+    })
+    return { status: 200, message: apath }
+  }
+
   @Post()
   async create(@Body() createPollresultDto: CreatePollresultDto) {
     return await this.pollresultService.create(createPollresultDto);
@@ -71,16 +137,16 @@ export class PollresultController {
 
   @Roles('R')
   @UseGuards(RolesGuard)
-  @Put('partial/:id')
-  updatePartial(@Param('id') id: string, @Body() data: any, @User() user: any) {
-    return this.pollresultService.updatePartial(id, data, user);
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updatePollresultDto: UpdatePollresultDto, @User() user: any) {
+    return this.pollresultService.update(id, updatePollresultDto, user);
   }
 
   @Roles('R')
   @UseGuards(RolesGuard)
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updatePollresultDto: UpdatePollresultDto, @User() user: any) {
-    return this.pollresultService.update(id, updatePollresultDto, user);
+  @Put('partial/:id')
+  updatePartial(@Param('id') id: string, @Body() data: any, @User() user: any) {
+    return this.pollresultService.updatePartial(id, data, user);
   }
 
   @Delete(':id')
@@ -88,68 +154,6 @@ export class PollresultController {
     return await this.pollresultService.remove(id);
   }
 
-  @Post('pictures1')
-  @UseInterceptors(FilesInterceptor('files'))
-  uploadFiles1(@UploadedFiles() files: Array<Express.Multer.File>) {
-    let apath = '';
-    if (process.env.DEV_STATUS) {
-      apath = join(__dirname, '..', process.env.DEFA_DIR);
-      if (!fs.existsSync(apath)) { fs.mkdirSync(apath); }
-    } else {
-      apath = process.env.DEFA_DIR; // process.env.DEFA_DIR solo esta ruta
-    }
-    const dir = files[0].originalname.toUpperCase();
-    apath = join(apath, dir);
-    if (!fs.existsSync(apath)) { fs.mkdirSync(apath); }
-
-    // apath = join(__dirname, '..', process.env.DEFA_DIR);
-    for (let i = 1; i < files.length; i++) {
-      const upr = files[i].originalname.toUpperCase();
-      const destPath = join(apath, upr);
-      fs.writeFileSync(destPath, files[i].buffer);
-    }
-
-    /*
-    files.forEach(async image => {
-      const upr = image.originalname.toUpperCase();
-      const destPath = join(apath , upr);
-      fs.writeFileSync(destPath, image.buffer);
-    })
-    */
-
-    return { status: 200, message: apath }
-  }
-
-  @Get('picture/:imagename')
-  getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
-    const upr = imagename.toUpperCase().split('__');
-    let apath = '';
-    if (process.env.DEV_STATUS) {
-      apath = join(__dirname, '..', process.env.DEFA_DIR, upr[0], upr[1]);
-    } else {
-      apath = join(process.env.DEFA_DIR, upr[0], upr[1]);
-    }
-
-    return of(res.sendFile(apath));
-    /*
-    const upr = imagename.toUpperCase();
-    return of(res.sendFile(join(__dirname + `${this.IMAGEFOLDER}${upr}`)))
-    */
-  }
-
-  @Post('pictures2')
-  @UseInterceptors(FilesInterceptor('files'))
-  uploadFiles2(@UploadedFiles() files: Array<Express.Multer.File>) {
-
-    //fs.rmSync(join('files','images'), { recursive: true, force: true });
-    //fs.mkdirSync(join('files', 'images'));
-    let apath = '';
-    files.forEach(async image => {
-      const upr = image.originalname.toUpperCase();
-      apath = join('/files', upr);
-      fs.writeFileSync(apath, image.buffer);
-    })
-    return { status: 200, message: apath }
-  }
+  
 
 }
