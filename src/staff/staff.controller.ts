@@ -9,7 +9,7 @@ import { Roles } from './roles.decorator';
 export class StaffController {
   constructor(private readonly staffService: StaffService) { }
 
-  @Roles('Q')
+  @Roles('F')
   @UseGuards(RolesGuard)
   @Post()
   create(@Body() createStaffDto: CreateStaffDto) {
@@ -21,6 +21,8 @@ export class StaffController {
     return this.staffService.login(updateStaffDto);
   }
 
+  @Roles('F')
+  @UseGuards(RolesGuard)
   @Get('filter/data?')
   findByQuery(@Query() filterQuery) {
     const { queryType, active, stars } = filterQuery;
@@ -36,16 +38,22 @@ export class StaffController {
     return this.staffService.findAll();
   }
 
+  @Roles('F')
+  @UseGuards(RolesGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.staffService.findOne(id);
   }
 
+  @Roles('F')
+  @UseGuards(RolesGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {
     return this.staffService.update(id, updateStaffDto);
   }
 
+  @Roles('F')
+  @UseGuards(RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.staffService.remove(id);

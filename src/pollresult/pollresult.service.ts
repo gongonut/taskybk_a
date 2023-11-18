@@ -17,7 +17,7 @@ export class PollresultService {
   async create(createPollresultDto: CreatePollresultDto) {
     const createdPlresult = await new this.pollResultModel(createPollresultDto);
     const { _id, staff__id, pollGrp_id, status } = createdPlresult;
-    const adata = {status, pollGrp_id}
+    const adata = { status, pollGrp_id }
     await this.chatcmd.handleNotifCMD('pollresult', _id.toString(), '', staff__id, staff__id, adata);
     return createdPlresult.save();
   }
@@ -47,7 +47,7 @@ export class PollresultService {
 
   async update(id: string, updatePollresultDto: UpdatePollresultDto, user: any) {
     const { staff__id, pollGrp_id, status } = updatePollresultDto;
-    const adata = {status, pollGrp_id}
+    const adata = { status, pollGrp_id }
     await this.chatcmd.handleNotifCMD('pollresult', id, '', user.staff__id, staff__id, adata);
     return await this.pollResultModel.findByIdAndUpdate(id, updatePollresultDto);
   }
@@ -55,12 +55,12 @@ export class PollresultService {
   async updatePartial(id: string, data: any, user: any) {
     const { fieldName, staff__id, chats, status, pollGrp_id } = data;
     if (fieldName === 'status') {
-      const adata = {status, pollGrp_id}
+      const adata = { status, pollGrp_id }
       await this.chatcmd.handleNotifCMD('pollresult', id, '', user.staff__id, staff__id, adata);
     } else {
       await this.chatcmd.handleNotifCMD('chat', id, '', user.staff__id, staff__id, pollGrp_id);
     }
-    return await this.pollResultModel.findByIdAndUpdate(id, {$set: {chats, status}});
+    return await this.pollResultModel.findByIdAndUpdate(id, { $set: { chats, status } });
   }
 
   async remove(id: string) {
@@ -69,8 +69,33 @@ export class PollresultService {
 
   async findByAnalitic(pollGrpList: string[], date_ini: number, date_end: number) {
     const result = [];
+    const options = { status: { $gt: 2 } };
+    if (date_ini > 0 && date_end > 0) {
+      options['date_ini'] = { $gt: date_ini };
+      options['date_end'] = { $lt: date_end };
+    }
+    if (pollGrpList.length > 0) {
+      options['pollGrp_id'] = pollGrpList;
+    }
+
+    (await this.pollResultModel.find(options))
+      .forEach(pr => {
+        result.push({
+          _id: pr._id,
+          id: pr.id,
+          date_ini: pr.date_ini,
+          date_end: pr.date_end,
+          pollGrp_id: pr.pollGrp_id,
+          pollGrp_name: pr.pollGrpName,
+          staff__id: pr.staff__id,
+          staff_name: pr.staff_name
+        })
+      });
+
+
+    /*
     if (date_ini === 0 && date_end === 0) {
-      (await this.pollResultModel.find({ pollGrp_id: { $in: pollGrpList } }))
+      (await this.pollResultModel.find({ pollGrp_id: { $in: pollGrpList }, status: { $gt: 2 } }))
         .forEach(pr => {
           result.push({
             _id: pr._id,
@@ -98,6 +123,7 @@ export class PollresultService {
           })
         });
     }
+    */
     return { status: 200, data: result };
   }
 
