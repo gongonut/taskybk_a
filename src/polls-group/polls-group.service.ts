@@ -21,12 +21,14 @@ export class PollsGroupService {
     // si es index modifico 
     if (id === 'index') {
       const grpIndex = await this.plgpModel.findOne({ id });
-      const json = grpIndex.toJSON();
-      // const botar = json.active;
-      // console.log(botar);
-      // const {children} = json;
-      this.cleanIndex(json.children[0], user.id);
-      return json;
+      if (grpIndex) {
+        const json = grpIndex.toJSON();
+        if (json.children.length > 0) {
+          this.cleanIndex(json.children[0], user.id);
+          return json;
+        }
+
+      }
     }
     return await this.plgpModel.findOne({ id }).exec();
   }

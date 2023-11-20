@@ -26,11 +26,18 @@ export class StaffService {
     */
     if (process.env.MASTER_EMAIL === email) {
       updateStaffDto.names = process.env.MASTER_EMAIL;
+      updateStaffDto.active = true;
+      // updateStaffDto.password = '';
+      updateStaffDto.rol = ['K','P','F','U','D','KP'];
       // let id = ObjectId  isValidObjectId(process.env.MASTER_EMAIL);
       const query = { email: process.env.MASTER_EMAIL }
       // Por ahora agrego password pero en el futuro podrá ser solo el correo
+      updateStaffDto.password = 'abcd0123';
+      const plainToHash = await hash(password, Number(process.env.HASH));
+      updateStaffDto = { ...updateStaffDto, password: plainToHash };
       const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-      return await this.staffModel.findOneAndUpdate(query, updateStaffDto, options);
+      updateStaffDto = await this.staffModel.findOneAndUpdate(query, updateStaffDto, options);
+      // updateStaffDto.password = 'ABCDEFGH'; // Ahora pasa el proceso
       // return this. update(id, updateStaffDto);
     }
     // ......................
@@ -42,7 +49,7 @@ export class StaffService {
     if (!userStaff) throw new HttpException('USER_NOT_FOUND', 404);
     // Si está bacío Asigna el nuevo password
     if (!userStaff.password || userStaff.password.length === 0) {
-      if (!(updateStaffDto.password && updateStaffDto.password.length > 6)) throw new HttpException('PASSWORD_NOT_PROVIDED', 405);
+      if (!(updateStaffDto.password && updateStaffDto.password.length >= 4)) throw new HttpException('PASSWORD_NOT_PROVIDED', 405);
       const plainToHash = await hash(password, Number(process.env.HASH));
       updateStaffDto = { ...updateStaffDto, password: plainToHash };
       return this.staffModel.findByIdAndUpdate(userStaff._id, updateStaffDto);
