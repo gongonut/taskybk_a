@@ -17,6 +17,9 @@ export class Staff {
     age?: number;
 
     @Prop()
+    city?: string;
+
+    @Prop()
     company_id?: string; // Nombre de la empresa a la que pertenece
 
     @Prop()

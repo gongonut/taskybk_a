@@ -16,6 +16,10 @@ export class CreateStaffDto {
 
     @IsString()
     @IsOptional()
+    city?: string;
+
+    @IsString()
+    @IsOptional()
     company_id?: string; // Nombre de la empresa a la que pertenece
 
     @IsOptional()
