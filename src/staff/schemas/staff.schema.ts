@@ -56,6 +56,9 @@ export class Staff {
     platform?: string; // nequi daviplata 
 
     @Prop()
+    pollresult_appoint?: string[];
+
+    @Prop()
     rol?: string[]
 
     @Prop()
