@@ -22,7 +22,7 @@ export class MailService {
   async defaultEmailHtml(emailDto: UpdateEmailDto) {
     
     // console.log(`${process.env.SMPT_EMAIL_LONG}--${process.env.EMAIL_USER} -- ${process.env.EMAIL_PASS_16}`);
-    await this.mails.sendMail({
+    return await this.mails.sendMail({
       to: emailDto.to,
       // from: process.env.EMAIL_USER,
       subject: '¡Bienvenido a tasky.!!',
@@ -32,7 +32,19 @@ export class MailService {
       }
       // attachments: emailDto.attachments
     })
-    return { status: 200, message: 'MAIL_SENDED' }
+    // return { status: 200, message: 'MAIL_SENDED' }
+  }
+
+  async defaultEmail(emailDto: UpdateEmailDto) {
+    const maillist = emailDto.to.split(';');
+    return;
+    return await this.mails.sendMail({
+      to: maillist,
+      // from: emailDto.from,
+      subject: emailDto.subject || '',
+      // html: emailDto.html || '',
+      // attachments: emailDto.attachments
+    })
   }
 
   /*

@@ -16,7 +16,8 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       transport: {
         host: process.env.SMPT_EMAIL_LONG,
         port: 465,
-        secure: true, // use SSLs
+        ignoreTLS: true,
+        secure: true, // use SSL
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS_16

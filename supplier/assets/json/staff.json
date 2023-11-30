@@ -44,10 +44,11 @@
           "name": "rol",
           "label": "Permiso para editar",
           "type": "multiselect",
+          "style": "w-full",
           "validators": { "required": true },
           "selectOptions": [
             { "key": "K", "value": "Es Tasker" },
-            { "key": "P", "value": "Es Usuario" },
+            { "key": "P", "value": "Es Administrador" },
             { "key": "F", "value": "Edita tasker" },
             { "key": "U", "value": "Edita usuaro" },
             { "key": "D", "value": "Edita directorio" }

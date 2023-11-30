@@ -5,12 +5,19 @@ import { CreateEmailDto } from './dto/create-email.dto';
 
 @Controller('email')
 export class EmailController {
-  constructor(private readonly mailService: MailService) {}
+  constructor(private readonly mailService: MailService) { }
+
+  @Post('activitynotif')
+  async activitynotif(@Body() createEmailDto: CreateEmailDto) {
+    return await this.mailService.defaultEmail(createEmailDto);
+  }
 
   @Post()
   defEmailHtml(@Body() createEmailDto: CreateEmailDto) {
     return this.mailService.defaultEmailHtml(createEmailDto);
   }
+
+
 
   /*
   @Post()
