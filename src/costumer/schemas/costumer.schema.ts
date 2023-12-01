@@ -12,7 +12,10 @@ export class Costumer {
     address?: string;
 
     @Prop()
-    email?: string;
+    email_1?: string;
+
+    @Prop()
+    email_2?: string;
 
     @Prop()
     id: string;

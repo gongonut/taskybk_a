@@ -23,19 +23,21 @@ export class CostumerService {
     // const pictArray: string[] = [];
     const workbook = new Workbook();
     await workbook.xlsx.readFile(file.path).then((workbook) => {
-      const worksheetCostum = workbook.getWorksheet("staff");
+      const worksheetCostum = workbook.getWorksheet('staff');
       const headerRows = 2;
       const staffRowC = worksheetCostum.actualRowCount; // determine the range of populated data
       for (let i = headerRows; i <= staffRowC; i++) {
         const formData = {
-          'name': worksheetCostum.getRow(i).getCell(1).value,
-          'id': worksheetCostum.getRow(i).getCell(2).value,
-          'linkup_1': worksheetCostum.getRow(i).getCell(3).value,
-          'phone_1': worksheetCostum.getRow(i).getCell(4).value,
-          'linkup_2': worksheetCostum.getRow(i).getCell(5).value,
-          'phone_2': worksheetCostum.getRow(i).getCell(6).value,
-          'address': worksheetCostum.getRow(i).getCell(7).value,
-          'email': worksheetCostum.getRow(i).getCell(8).value,
+          'name': worksheetCostum.getRow(i).getCell(1).text || '',
+          'id': worksheetCostum.getRow(i).getCell(2).text || '',
+          'linkup_1': worksheetCostum.getRow(i).getCell(3).text || '',
+          'phone_1': worksheetCostum.getRow(i).getCell(4).text || '',
+          'email_1': worksheetCostum.getRow(i).getCell(5).text || '',
+          'linkup_2': worksheetCostum.getRow(i).getCell(6).text || '',
+          'phone_2': worksheetCostum.getRow(i).getCell(7).text || '',
+          'email_2': worksheetCostum.getRow(i).getCell(8).text || '',
+          'address': worksheetCostum.getRow(i).getCell(9).text || '',
+          // 'email': worksheetCostum.getRow(i).getCell(10).value,
         }
         thisArray.push(formData as unknown as Costumer);
       }

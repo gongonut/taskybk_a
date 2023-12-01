@@ -14,7 +14,7 @@ export class CostumerController {
     return this.costumerService.create(createCostumerDto);
   }
 
-  @Post('excel2Costum')
+  @Post('excel2costum')
   @UseInterceptors(
     FileInterceptor(
       'file', {

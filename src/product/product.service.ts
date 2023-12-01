@@ -28,9 +28,9 @@ export class ProductService {
       const staffRowC = worksheetProd.actualRowCount; // determine the range of populated data
       for (let i = headerRows; i <= staffRowC; i++) {
         const formData = {
-          'id': worksheetProd.getRow(i).getCell(1).value,
-          'name': worksheetProd.getRow(i).getCell(2).value,
-          'description': worksheetProd.getRow(i).getCell(3).value,
+          'id': worksheetProd.getRow(i).getCell(1).text || '',
+          'name': worksheetProd.getRow(i).getCell(2).text || '',
+          'description': worksheetProd.getRow(i).getCell(3).text || '',
         }
         thisArray.push(formData as unknown as Product);
       }

@@ -25,7 +25,7 @@ export class ProductController {
     }
     )
   )
-  async excel2Product(@UploadedFile() file: Express.Multer.File) {
+  async excel2product(@UploadedFile() file: Express.Multer.File) {
     await this.productService.excel2Product(file);
   }
 

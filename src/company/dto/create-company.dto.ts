@@ -13,7 +13,7 @@ export class CreateCompanyDto {
 
     @IsNumber()
     @IsOptional()
-    pollgrp_ctv?: number;
+    logo?: string;
 
     @IsOptional()
     site?: string;

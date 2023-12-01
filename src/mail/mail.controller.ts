@@ -9,12 +9,13 @@ export class EmailController {
 
   @Post('activitynotif')
   async activitynotif(@Body() createEmailDto: CreateEmailDto) {
-    return await this.mailService.defaultEmail(createEmailDto);
+    return await this.mailService.welcome2tasky(createEmailDto);
+    // return await this.mailService.defaultEmail(createEmailDto);
   }
 
   @Post()
   defEmailHtml(@Body() createEmailDto: CreateEmailDto) {
-    return this.mailService.defaultEmailHtml(createEmailDto);
+    return this.mailService.welcome2tasky(createEmailDto);
   }
 
 

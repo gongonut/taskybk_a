@@ -8,7 +8,11 @@ export class CreateCostumerDto {
 
     @IsOptional()
     @IsString()
-    email?: string;
+    email_1?: string;
+
+    @IsOptional()
+    @IsString()
+    email_2?: string;
 
     @IsNotEmpty()
     @IsString()

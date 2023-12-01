@@ -18,4 +18,7 @@ export class CreateEmailDto {
 
     @IsOptional()
     attachments?: string[];
+
+    @IsOptional()
+    data?: object;
 }

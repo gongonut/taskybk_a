@@ -15,7 +15,7 @@ export class Company {
     name?: string;
 
     @Prop()
-    pollgrp_ctv?: number;
+    logo?: string;
 
     @Prop()
     site?: string;
