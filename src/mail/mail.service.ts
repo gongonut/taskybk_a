@@ -56,6 +56,38 @@ export class MailService {
   }
 
   /*
+  async html2pdf(htmlQuote: string, options = {}) {
+    try {
+      const browser = await puppeteer.launch({
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      const page = await browser.newPage();
+      await page.setContent(htmlQuote);
+      const buffer = await page.pdf({
+        // path: 'output-abc.pdf',
+        format: 'letter',
+        printBackground: true,
+        margin: {
+          left: '10mm',
+          top: '10mm',
+          right: '10mm',
+          bottom: '10mm',
+        },
+        ...options,
+      });
+      await browser.close();
+      // process.exit();
+      return buffer;
+
+    } catch (e) {
+      console.log(e);
+      // await browser.close();
+    }
+  }
+  */
+
+  /*
 
   create(createEmailDto: CreateEmailDto) {
     return 'This action adds a new email';
