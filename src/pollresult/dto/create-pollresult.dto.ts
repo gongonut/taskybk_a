@@ -21,6 +21,10 @@ export class CreatePollresultDto {
 
     @IsOptional()
     @IsString()
+    crm_costum_contactname?: string;
+
+    @IsOptional()
+    @IsString()
     crm_prod_id?: string;
 
     @IsOptional()
@@ -112,4 +116,7 @@ export class CreatePollresultDto {
 
     @IsOptional()
     values?: any;
+
+    @IsOptional()
+    metaValues?: any;
 }

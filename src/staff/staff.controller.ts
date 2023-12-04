@@ -72,7 +72,7 @@ export class StaffController {
     return this.staffService.findOne(id);
   }
 
-  @Roles('F')
+  @Roles('A')
   @UseGuards(RolesGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {

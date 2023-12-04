@@ -14,6 +14,9 @@ export class CreateStaffDto {
     @IsOptional()
     age?: number;
 
+    @IsOptional()
+    appoint?: object[];
+
     @IsString()
     @IsOptional()
     city?: string;
@@ -63,9 +66,6 @@ export class CreateStaffDto {
     @IsString()
     @IsOptional()
     platform?: string; // nequi daviplata 
-
-    @IsOptional()
-    appoint?: string[];
 
 // K: Es tasker, P: Es supplier, F: Edita staff, U: Edita Usuario, D: Edita PollGroup (directorio) R: edita poll resulto
     @IsOptional()

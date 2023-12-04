@@ -54,8 +54,8 @@ export class CostumerService {
     return this.costumerModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} costumer`;
+  async findOne(id: string) {
+    return await this.costumerModel.findOne({id}).exec();
   }
 
   update(id: number, updateCostumerDto: UpdateCostumerDto) {

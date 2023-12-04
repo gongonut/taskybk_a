@@ -21,6 +21,9 @@ export class PollResult {
     crm_costum_name?: string;
 
     @Prop()
+    crm_costum_contactname?: string;
+
+    @Prop()
     crm_prod_id?: string;
 
     @Prop()
@@ -98,6 +101,9 @@ export class PollResult {
 
     @Prop({ type: Object })
     values?: { [index: string]: any };
+
+    @Prop({ type: Object })
+    metaValues?: { [index: string]: any };
 }
 
 export const PollsResultSchema = SchemaFactory.createForClass(PollResult);

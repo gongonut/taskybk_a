@@ -35,8 +35,8 @@ export class CostumerController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.costumerService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.costumerService.findOne(id);
   }
 
   @Patch(':id')

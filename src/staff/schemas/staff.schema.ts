@@ -17,6 +17,9 @@ export class Staff {
     age?: number;
 
     @Prop()
+    appoint?: object[];
+
+    @Prop()
     city?: string;
 
     @Prop()
@@ -54,9 +57,6 @@ export class Staff {
 
     @Prop()
     platform?: string; // nequi daviplata 
-
-    @Prop()
-    appoint?: string[];
 
     @Prop()
     rol?: string[]
