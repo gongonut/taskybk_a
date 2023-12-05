@@ -9,7 +9,7 @@ export class EmailController {
 
   @Post('activitynotif')
   async activitynotif(@Body() createEmailDto: CreateEmailDto) {
-    return await this.mailService.welcome2tasky(createEmailDto);
+    return await this.mailService.startendactivity(createEmailDto);
     // return await this.mailService.defaultEmail(createEmailDto);
   }
 

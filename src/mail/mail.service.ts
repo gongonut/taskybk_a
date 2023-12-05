@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import puppeteer from "puppeteer";
 
 @Injectable()
 export class MailService {
-    constructor(private mails: MailerService) { }
+  constructor(private mails: MailerService) { }
 
   /*
   async quoteEmail(updateQuoteDto: UpdateQuoteDto) {
@@ -36,6 +37,10 @@ export class MailService {
   }
 
   async startendactivity(emailDto: UpdateEmailDto) {
+
+    const pdf = await this.html2pdf(emailDto.html);
+    // attach = { filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }
+
     const maillist = emailDto.to.split(';').join(',');
     // console.log(`${process.env.SMPT_EMAIL_LONG}--${process.env.EMAIL_USER} -- ${process.env.EMAIL_PASS_16}`);
     return await this.mails.sendMail({
@@ -49,21 +54,20 @@ export class MailService {
         activity_logo: emailDto.data['activity_logo'] || 'https://firebasestorage.googleapis.com/v0/b/epoll-e2412.appspot.com/o/tasky%2Ftasky.png?alt=media&token=8333b7e3-5554-4ec3-b638-d87899d108d5%22',
         status: emailDto.data['status'],
         data: emailDto.data['data']
-      }
-      // attachments: emailDto.attachments
+      },
+      attachments: [{ filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }]
     })
     // return { status: 200, message: 'MAIL_SENDED' }
   }
 
-  /*
-  async html2pdf(htmlQuote: string, options = {}) {
+  async html2pdf(html: string, options = {}) {
     try {
       const browser = await puppeteer.launch({
         headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       const page = await browser.newPage();
-      await page.setContent(htmlQuote);
+      await page.setContent(html);
       const buffer = await page.pdf({
         // path: 'output-abc.pdf',
         format: 'letter',
@@ -85,7 +89,6 @@ export class MailService {
       // await browser.close();
     }
   }
-  */
 
   /*
 
