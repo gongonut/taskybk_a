@@ -103,7 +103,11 @@ export class PollresultService {
           pollGrp_id: pr.pollGrp_id,
           pollGrp_name: pr.pollGrpName,
           staff__id: pr.staff__id,
-          staff_name: pr.staff_name
+          staff_name: pr.staff_name || pr.staff__id,
+          crm_costum_id: pr.crm_costum_id,
+          crm_costum_name: pr.crm_costum_name,
+          crm_prod_id: pr.crm_prod_id,
+          crm_prod_name: pr.crm_prod_name,
         })
       });
 
