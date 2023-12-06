@@ -9,8 +9,11 @@ export class EmailController {
 
   @Post('activitynotif')
   async activitynotif(@Body() createEmailDto: CreateEmailDto) {
-    return await this.mailService.startendactivity(createEmailDto);
-    // return await this.mailService.defaultEmail(createEmailDto);
+    if (createEmailDto.subject_opt === 'start') {
+      createEmailDto.subject_opt === 'start'? 'Inicia actividad' : 'Finalizar actividad';
+      return await this.mailService.startactivity(createEmailDto);
+    }
+    return await this.mailService.endactivity(createEmailDto);
   }
 
   @Post()

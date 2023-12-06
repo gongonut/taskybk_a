@@ -11,10 +11,13 @@ export class CreateEmailDto {
     from: string;
 
     @IsOptional()
-    subject: string;
+    subject?: string;
 
     @IsOptional()
-    html: string;
+    subject_opt?: string;
+
+    @IsOptional()
+    html?: string;
 
     @IsOptional()
     attachments?: string[];
