@@ -82,9 +82,10 @@ export class PollresultService {
     return await this.pollResultModel.findByIdAndRemove(id);
   }
 
-  async findByAnalitic(pollGrpList: string[], date_ini: number, date_end: number) {
+  async findByAnalitic(pollGrpList: string[], crm: string, date_ini: number, date_end: number) {
     const result = [];
     const options = { status: { $gt: 2 } };
+    options['crm'] =  crm;
     if (date_ini > 0 && date_end > 0) {
       options['date_ini'] = { $gt: date_ini };
       options['date_end'] = { $lt: date_end };

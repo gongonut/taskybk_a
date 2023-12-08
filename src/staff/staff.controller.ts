@@ -26,7 +26,7 @@ export class StaffController {
   @Roles('F')
   @UseGuards(RolesGuard)
   @Get('filter/data?')
-  findByQuery(@Query() filterQuery) {
+  findByQuery(@Query() filterQuery: any) {
     return this.staffService.findByQueryFilter(filterQuery);
 
 

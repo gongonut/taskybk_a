@@ -53,7 +53,7 @@ export class StaffService {
       if (!(updateStaffDto.password && updateStaffDto.password.length >= 4)) throw new HttpException('PASSWORD_NOT_PROVIDED', 405);
       const plainToHash = await hash(password, Number(process.env.HASH));
       updateStaffDto = { ...updateStaffDto, password: plainToHash };
-      return this.staffModel.findByIdAndUpdate(userStaff._id, updateStaffDto);
+      return this.staffModel.findByIdAndUpdate(userStaff._id, updateStaffDto).exec();
     }
     const checkPass = await compare(password, userStaff.password);
     if (!checkPass) throw new HttpException('INVALID_PASSWORD', 403);
@@ -81,8 +81,8 @@ export class StaffService {
   }
 
   findByQueryFilter(filterQuery: any): Promise<Staff[]> {
-    const { queryType, active, age_from, age_to, city, rol, stars, studyLevel } = filterQuery;
-    const options = {rol: {$in: rol}};
+    const { queryType, active, age_from, age_to, city, rol, stars, studyLevel, email } = filterQuery;
+    const options = {};
     switch (queryType) {
       case '0':
         return this.staffModel.find().exec();
@@ -95,7 +95,8 @@ export class StaffService {
         options['stars'] = stars;
         break;
       case '3': // Full
-        options['active'] = true;
+        // options['active'] = true;
+        if (active) { options['active'] = active }
         if (age_from && age_to) {
           options['age'] = { $gt: age_from };
           options['age'] = { $lt: age_to };
@@ -107,7 +108,19 @@ export class StaffService {
         if (studyLevel != null) {
           options['studyLevel'] = studyLevel;
         }
-
+        if(rol) {
+          options['rol'] = {$in: rol};
+        }
+        if(stars) {
+          options['stars'] = stars;
+        }
+        if (email) {options['email'] = email;}
+        break;
+      case '4': // rol
+        options['rol'] = { $in: rol };
+        break;
+      case '5': // correo
+        options['email'] = email;
         break;
     }
     return this.staffModel.find(options)

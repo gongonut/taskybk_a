@@ -113,11 +113,12 @@ export class PollresultController {
   @Get('analitic/data?')
   async findByAnalitic(
     @Query('pollGrp') pollGrp: string,
+    @Query('crm') crm: string,
     @Query('date_ini') date_ini: number,
     @Query('date_end') date_end: number,) {
     const pollGrpList = JSON.parse(pollGrp);
     // const pollGrpList = parcepgr.split(',');
-    return await this.pollresultService.findByAnalitic(pollGrpList, +date_ini, +date_end);
+    return await this.pollresultService.findByAnalitic(pollGrpList, crm, +date_ini, +date_end);
   }
 
   @Get('chat/:id')

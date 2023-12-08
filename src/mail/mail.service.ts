@@ -53,7 +53,7 @@ export class MailService {
         activity_name: emailDto.data['activity_name'] || 'Actividad',
         activity_logo: emailDto.data['activity_logo'] || 'https://firebasestorage.googleapis.com/v0/b/epoll-e2412.appspot.com/o/tasky%2Ftasky.png?alt=media&token=8333b7e3-5554-4ec3-b638-d87899d108d5%22',
         status: emailDto.data['status'],
-        data: emailDto.data['data']
+        date: emailDto.data['date']
       },
       // attachments: [{ filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }]
     })
@@ -77,7 +77,7 @@ export class MailService {
         activity_name: emailDto.data['activity_name'] || 'Actividad',
         activity_logo: emailDto.data['activity_logo'] || 'https://firebasestorage.googleapis.com/v0/b/epoll-e2412.appspot.com/o/tasky%2Ftasky.png?alt=media&token=8333b7e3-5554-4ec3-b638-d87899d108d5%22',
         status: emailDto.data['status'],
-        data: emailDto.data['data']
+        date: emailDto.data['date']
       },
       attachments: [{ filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }]
     })
