@@ -40,7 +40,7 @@ export class MailService {
 
     // const pdf = await this.html2pdf(emailDto.html);
     // attach = { filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }
-
+    const datestr = new Date(emailDto.data['date']).toLocaleString('es-CO', { 'dateStyle': 'short', 'timeStyle': 'short', 'hour12': true })
     const maillist = emailDto.to.split(';').join(',');
     // console.log(`${process.env.SMPT_EMAIL_LONG}--${process.env.EMAIL_USER} -- ${process.env.EMAIL_PASS_16}`);
     return await this.mails.sendMail({
@@ -52,8 +52,8 @@ export class MailService {
         staff_name: emailDto.data['staff_name'] || 'Tasker',
         activity_name: emailDto.data['activity_name'] || 'Actividad',
         activity_logo: emailDto.data['activity_logo'] || 'https://firebasestorage.googleapis.com/v0/b/epoll-e2412.appspot.com/o/tasky%2Ftasky.png?alt=media&token=8333b7e3-5554-4ec3-b638-d87899d108d5%22',
-        status: emailDto.data['status'],
-        date: emailDto.data['date']
+        status: 'Inicia',
+        date: datestr
       },
       // attachments: [{ filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }]
     })
@@ -64,7 +64,7 @@ export class MailService {
 
     const pdf = await this.html2pdf(emailDto.html);
     // attach = { filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }
-
+    const datestr = new Date(emailDto.data['date']).toLocaleString('es-CO', { 'dateStyle': 'short', 'timeStyle': 'short', 'hour12': true })
     const maillist = emailDto.to.split(';').join(',');
     // console.log(`${process.env.SMPT_EMAIL_LONG}--${process.env.EMAIL_USER} -- ${process.env.EMAIL_PASS_16}`);
     return await this.mails.sendMail({
@@ -76,8 +76,8 @@ export class MailService {
         staff_name: emailDto.data['staff_name'] || 'Tasker',
         activity_name: emailDto.data['activity_name'] || 'Actividad',
         activity_logo: emailDto.data['activity_logo'] || 'https://firebasestorage.googleapis.com/v0/b/epoll-e2412.appspot.com/o/tasky%2Ftasky.png?alt=media&token=8333b7e3-5554-4ec3-b638-d87899d108d5%22',
-        status: emailDto.data['status'],
-        date: emailDto.data['date']
+        status: 'Finalizada',
+        date: datestr
       },
       attachments: [{ filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }]
     })
