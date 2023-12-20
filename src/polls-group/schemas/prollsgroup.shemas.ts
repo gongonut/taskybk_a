@@ -12,15 +12,6 @@ export class PollGroups {
     active?: boolean;
 
     @Prop()
-    age_from?: number;
-
-    @Prop()
-    age_to?: number;
-
-    @Prop()
-    age?: number;
-
-    @Prop()
     children: object[];
 
     @Prop()
@@ -109,6 +100,9 @@ export class PollGroups {
 
     @Prop()
     stars?: number; // Minimo de estrellas del staff
+
+    @Prop()
+    schedule: boolean;
 
     @Prop()
     studyLevel?: number; // 0: sin estudio; 1: colegio; 2: universitario;

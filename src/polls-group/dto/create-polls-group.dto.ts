@@ -7,18 +7,6 @@ export class CreatePollsGroupDto {
     @IsBoolean()
     active?: boolean;
 
-    @IsOptional()
-    @IsNumber()
-    age_from?: number;
-
-    @IsOptional()
-    @IsNumber()
-    age_to?: number;
-
-    @IsOptional()
-    @IsNumber()
-    age?: number;
-
     @IsNotEmpty()
     children: object[];
 
@@ -135,6 +123,9 @@ export class CreatePollsGroupDto {
     @IsOptional()
     @IsNumber()
     studyLevel?: number; // 0: sin estudio; 1: colegio; 2: universitario;
+
+    @IsBoolean()
+    schedule: boolean;
 
     @IsOptional()
     taskerList: string[]; // Los Ids del staff
