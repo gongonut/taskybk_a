@@ -107,8 +107,8 @@ export class PollresultService {
           staff_name: pr.staff_name || pr.staff__id,
           crm_costum_id: pr.crm_costum_id,
           crm_costum_name: pr.crm_costum_name,
-          crm_prod_id: pr.crm_prod_id,
-          crm_prod_name: pr.crm_prod_name,
+          crm_prods: pr.crm_prods,
+          // crm_prod_name: pr.crm_prod_name,
         })
       });
 

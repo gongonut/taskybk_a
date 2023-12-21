@@ -32,7 +32,7 @@ export class CreatePollresultDto {
 
     @IsOptional()
     @IsString()
-    crm_prod_name?: string;
+    crm_prods?: string[];
 
     @IsOptional()
     data?: any;

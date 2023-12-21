@@ -23,14 +23,11 @@ export class PollResult {
     @Prop()
     crm_costum_contactname?: string;
 
-    @Prop()
-    crm_prod_id?: string;
-
     @Prop({ type: Object })
     crm_prod_key: {key: string, value: string}[];
 
     @Prop()
-    crm_prod_name?: string;
+    crm_prods?: string[];
 
     @Prop({ type: Object })
     data?: any;
