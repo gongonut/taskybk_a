@@ -82,6 +82,10 @@ export class CreatePollsGroupDto {
     name: string; // Si empresa: Nombre empresa
 
     @IsOptional()
+    @IsString()
+    notes?: string[];
+
+    @IsOptional()
     onEnd?: object;
 
     @IsOptional()

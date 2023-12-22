@@ -68,6 +68,9 @@ export class PollGroups {
     @Prop()
     name: string; // Si empresa: Nombre empresa
 
+    @Prop()
+    notes?: string[];
+
     @Prop({ type: Object })
     onEnd?: any;
 
