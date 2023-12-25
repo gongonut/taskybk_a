@@ -65,14 +65,14 @@ export class PollresultService {
   }
 
   async updatePartial(id: string, data: any, user: any) {
-    const { fieldName, staff__id, chats, status, pollGrp_id } = data;
+    const { fieldName, staff__id, chats, status, pollGrp_id, pollGrpName, staff_name } = data;
     
     if (fieldName === 'status') {
       const adata = { status, pollGrp_id }
       await this.chatcmd.handleNotifCMD('pollresult', id, user.id, staff__id, adata);
     } else {
       const msg = chats[chats.length - 1];
-      const adata = { status, pollGrp_id, msg }
+      const adata = { status, pollGrp_id, pollGrpName, staff_name, msg }
       await this.chatcmd.handleNotifCMD('chat', id, user.id, staff__id, adata);
     }
     return await this.pollResultModel.findByIdAndUpdate(id, { $set: { chats, status } });
