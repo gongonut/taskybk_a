@@ -82,20 +82,33 @@ export class PollresultService {
     return await this.pollResultModel.findByIdAndRemove(id);
   }
 
-  async findByAnalitic(pollGrpList: string[], crm: string, date_ini: number, date_end: number) {
+  async findByAnalitic(staff__idList: string[], pollGrpList: string[], costumList: string[], prodList: string[], date_ini: number, date_end: number) {
     const result = [];
     const options = { status: { $gt: 2 } };
-    options['crm'] =  crm;
     if (date_ini > 0 && date_end > 0) {
       options['date_ini'] = { $gt: date_ini };
       options['date_end'] = { $lt: date_end };
     }
+
+    if (staff__idList.length > 0) {
+      options['staff__id'] = {$in: staff__idList};
+    }
+
     if (pollGrpList.length > 0) {
       options['pollGrp_id'] = {$in: pollGrpList};
     }
 
+    if (costumList.length > 0) {
+      options['crm_costum_id'] = {$in: costumList};
+    }
+
+    if (prodList.length > 0) {
+      options['crm_prod_key']['key'] = {$in: prodList};
+    }
+
     (await this.pollResultModel.find(options))
       .forEach(pr => {
+        const prNmList = pr.crm_prod_key.map(prkv => prkv.value);
         result.push({
           _id: pr._id,
           id: pr.id,
@@ -103,11 +116,11 @@ export class PollresultService {
           date_end: pr.date_end,
           pollGrp_id: pr.pollGrp_id,
           pollGrp_name: pr.pollGrpName,
-          staff__id: pr.staff__id,
-          staff_name: pr.staff_name || pr.staff__id,
-          crm_costum_id: pr.crm_costum_id,
-          crm_costum_name: pr.crm_costum_name,
-          crm_prods: pr.crm_prods,
+          staff_id: pr.staffId,
+          staff_name: pr.staff_name || 'Sin nombre',
+          costumer_id: pr.crm_costum_id,
+          costumer_name: pr.crm_costum_name,
+          crm_prods: prNmList,
           // crm_prod_name: pr.crm_prod_name,
         })
       });

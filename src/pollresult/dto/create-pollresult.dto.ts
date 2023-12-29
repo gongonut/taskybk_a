@@ -31,10 +31,6 @@ export class CreatePollresultDto {
     crm_prod_key: {key: string, value: string}[];
 
     @IsOptional()
-    @IsString()
-    crm_prods?: string[];
-
-    @IsOptional()
     data?: any;
 
     @IsOptional()

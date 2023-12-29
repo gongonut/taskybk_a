@@ -26,9 +26,6 @@ export class PollResult {
     @Prop({ type: Object })
     crm_prod_key: {key: string, value: string}[];
 
-    @Prop()
-    crm_prods?: string[];
-
     @Prop({ type: Object })
     data?: any;
 
