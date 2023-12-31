@@ -111,16 +111,16 @@ export class PollresultService {
         const prNmList = pr.crm_prod_key.map(prkv => prkv.value);
         result.push({
           _id: pr._id,
-          id: pr.id,
-          date_ini: pr.date_ini,
+          // costumer_id: pr.crm_costum_id,
+          costumer_name: pr.crm_costum_name,
+          crm_prods: prNmList,
           date_end: pr.date_end,
+          date_ini: pr.date_ini,
+          id: pr.id,
           pollGrp_id: pr.pollGrp_id,
           pollGrp_name: pr.pollGrpName,
           staff_id: pr.staffId,
           staff_name: pr.staff_name || 'Sin nombre',
-          costumer_id: pr.crm_costum_id,
-          costumer_name: pr.crm_costum_name,
-          crm_prods: prNmList,
           // crm_prod_name: pr.crm_prod_name,
         })
       });
