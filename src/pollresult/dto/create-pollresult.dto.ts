@@ -23,12 +23,15 @@ export class CreatePollresultDto {
     @IsString()
     crm_costum_contactname?: string;
 
-    @IsOptional()
-    @IsString()
-    crm_prod_id?: string;
+    // @IsOptional()
+    // crm_prod_key: {key: string, value: string}[];
 
     @IsOptional()
-    crm_prod_key: {key: string, value: string}[];
+    crm_prod_id?: string[]
+
+    @IsOptional()
+    crm_prod_name?: string[]
+
 
     @IsOptional()
     data?: any;

@@ -103,24 +103,27 @@ export class PollresultService {
     }
 
     if (prodList.length > 0) {
-      options['crm_prod_key']['key'] = {$in: prodList};
+      options['crm_prod_id'] = {$in: prodList};
     }
+    
+    // options.sort = {date_ini:1}
+    // .sort({date_ini:1}
 
-    (await this.pollResultModel.find(options))
+    (await this.pollResultModel.find(options).sort({'date_ini':1}))
       .forEach(pr => {
-        const prNmList = pr.crm_prod_key.map(prkv => prkv.value);
+        // const prNmList = pr.crm_prod_name.map(prkv => prkv.value);
         result.push({
           _id: pr._id,
           // costumer_id: pr.crm_costum_id,
           costumer_name: pr.crm_costum_name,
-          crm_prods: prNmList,
+          crm_products: pr.crm_prod_name,
           date_end: pr.date_end,
           date_ini: pr.date_ini,
           id: pr.id,
-          pollGrp_id: pr.pollGrp_id,
-          pollGrp_name: pr.pollGrpName,
-          staff_id: pr.staffId,
-          staff_name: pr.staff_name || 'Sin nombre',
+          activity_id: pr.pollGrp_id,
+          activity_name: pr.pollGrpName,
+          tasker_id: pr.staffId,
+          tasker_name: pr.staff_name || 'Sin nombre',
           // crm_prod_name: pr.crm_prod_name,
         })
       });
