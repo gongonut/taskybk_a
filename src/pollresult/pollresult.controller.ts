@@ -63,7 +63,7 @@ export class PollresultController {
     return { status: 200, message: apath }
   }
 
-  
+
 
   @Post('pictures2')
   @UseInterceptors(FilesInterceptor('files'))
@@ -112,23 +112,24 @@ export class PollresultController {
 
   @Get('analitic/data?')
   async findByAnalitic(
+    @Query('crm') crm: string,
     @Query('staff__id') staff__id: string,
     @Query('pollGrp') pollGrp: string,
     @Query('costumData') costumData: string,
     @Query('prodData') prodData: string,
     @Query('date_ini') date_ini: number,
     @Query('date_end') date_end: number,) {
-      const staff__idList = JSON.parse(staff__id);
+    const staff__idList = JSON.parse(staff__id);
     const pollGrpList = JSON.parse(pollGrp);
     const costumList = JSON.parse(costumData);
     const ProdList = JSON.parse(prodData);
-    return await this.pollresultService.findByAnalitic(staff__idList, pollGrpList, costumList, ProdList, +date_ini, +date_end);
+    return await this.pollresultService.findByAnalitic(crm, staff__idList, pollGrpList, costumList, ProdList, +date_ini, +date_end);
   }
 
   @Get('chat/:id')
   async findChat(@Param('id') id: string) {
-      return await this.pollresultService.getChat(id);
-    }
+    return await this.pollresultService.getChat(id);
+  }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
@@ -159,6 +160,6 @@ export class PollresultController {
     return await this.pollresultService.remove(id);
   }
 
-  
+
 
 }

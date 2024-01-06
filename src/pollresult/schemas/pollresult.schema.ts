@@ -10,9 +10,6 @@ export class PollResult {
 
     @Prop({ type: [Object] })
     chats: any[];
-
-    @Prop()
-    crm: boolean;
     
     @Prop()
     crm_costum_id?: string;

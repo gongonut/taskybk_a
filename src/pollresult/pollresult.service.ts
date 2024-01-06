@@ -59,14 +59,14 @@ export class PollresultService {
     const adata = { status, pollGrp_id }
     await this.chatcmd.handleNotifCMD('pollresult', id, user.staff__id, staff__id, adata);
     if (updatePollresultDto.ended) {
-      
+
     }
     return await this.pollResultModel.findByIdAndUpdate(id, updatePollresultDto);
   }
 
   async updatePartial(id: string, data: any, user: any) {
     const { fieldName, staff__id, chats, status, pollGrp_id, pollGrpName, staff_name } = data;
-    
+
     if (fieldName === 'status') {
       const adata = { status, pollGrp_id }
       await this.chatcmd.handleNotifCMD('pollresult', id, user.id, staff__id, adata);
@@ -82,8 +82,8 @@ export class PollresultService {
     return await this.pollResultModel.findByIdAndRemove(id);
   }
 
-  async findByAnalitic(staff__idList: string[], pollGrpList: string[], costumList: string[], prodList: string[], date_ini: number, date_end: number) {
-    const result = [];
+  async findByAnalitic(crm: string, staff__idList: string[], pollGrpList: string[], costumList: string[], prodList: string[], date_ini: number, date_end: number) {
+    // let result = [];
     const options = { status: { $gt: 2 } };
     if (date_ini > 0 && date_end > 0) {
       options['date_ini'] = { $gt: date_ini };
@@ -91,27 +91,38 @@ export class PollresultService {
     }
 
     if (staff__idList.length > 0) {
-      options['staff__id'] = {$in: staff__idList};
+      options['staff__id'] = { $in: staff__idList };
     }
 
     if (pollGrpList.length > 0) {
-      options['pollGrp_id'] = {$in: pollGrpList};
+      options['pollGrp_id'] = { $in: pollGrpList };
     }
 
     if (costumList.length > 0) {
-      options['crm_costum_id'] = {$in: costumList};
+      options['crm_costum_id'] = { $in: costumList };
     }
 
     if (prodList.length > 0) {
-      options['crm_prod_id'] = {$in: prodList};
+      options['crm_prod_id'] = { $in: prodList };
     }
-    
+
     // options.sort = {date_ini:1}
     // .sort({date_ini:1}
+    // console.log(crm)
+    if (crm && crm === 'T') {
+      return { status: 200, data: await this.result2crm(options) };
+    } else {
+      // result = await this.pollResultModel.find(options).sort({ 'date_ini': 1 });
+      return { status: 200, data: await this.result2activity(options) };
+    }
 
-    (await this.pollResultModel.find(options).sort({'date_ini':1}))
+
+  }
+
+  async result2crm(options: any) {
+    const result = [];
+    (await this.pollResultModel.find(options).sort({ 'date_ini': 1 }))
       .forEach(pr => {
-        // const prNmList = pr.crm_prod_name.map(prkv => prkv.value);
         result.push({
           _id: pr._id,
           // costumer_id: pr.crm_costum_id,
@@ -127,40 +138,47 @@ export class PollresultService {
           // crm_prod_name: pr.crm_prod_name,
         })
       });
+    return result;
+  }
 
+  async result2activity(options: any) {
+    const result = [];
+    // let total = 0;
+    // let header: any;
+    (await this.pollResultModel.find(options).sort({ 'date_ini': 1 }))
+      .forEach(pr => {
+        result.push({
+          _id: pr._id,
+          date_end: pr.date_end,
+          geoLocEnd: pr.geoLocEnd,
+          date_ini: pr.date_ini,
+          geoLocStart: pr.geoLocStart,
+          tasker_name: pr.staff_name || 'Sin nombre',
+          ...pr.values
+        });
 
-    /*
-    if (date_ini === 0 && date_end === 0) {
-      (await this.pollResultModel.find({ pollGrp_id: { $in: pollGrpList }, status: { $gt: 2 } }))
-        .forEach(pr => {
-          result.push({
-            _id: pr._id,
-            id: pr.id,
-            date_ini: pr.date_ini,
-            date_end: pr.date_end,
-            pollGrp_id: pr.pollGrp_id,
-            pollGrp_name: pr.pollGrpName,
-            staff__id: pr.staff__id,
-            staff_name: pr.staff_name
-          })
-        });
-    } else {
-      (await this.pollResultModel.find({ pollGrp_id: { $in: pollGrpList }, status: { $gt: 2 }, date_ini: { $gt: date_ini }, date_end: { '$lt': date_end } }))
-        .forEach(pr => {
-          result.push({
-            _id: pr._id,
-            id: pr.id,
-            date_ini: pr.date_ini,
-            date_end: pr.date_end,
-            pollGrp_id: pr.pollGrp_id,
-            pollGrp_name: pr.pollGrpName,
-            staff__id: pr.staff__id,
-            staff_name: pr.staff_name
-          })
-        });
-    }
-    */
-    return { status: 200, data: result };
+        /*
+        if (Object.keys(npr).length > total) {
+          header = npr;
+          total = Object.keys(npr).length;
+        }
+        */
+
+        // delete (mypr.values);
+        /*
+        result.push({
+          _id: pr._id,
+          date_end: pr.date_end,
+          geoLocEnd: pr.geoLocEnd,
+          date_ini: pr.date_ini,
+          geoLocStart: pr.geoLocStart,
+          tasker_name: pr.staff_name || 'Sin nombre',
+          values: pr.values
+        })
+        */
+      });
+      // if (header) header['_id'] = 'header'; {result.push(header);}
+    return result;
   }
 
   async getChat(id: string) {

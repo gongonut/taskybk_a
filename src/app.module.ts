@@ -16,7 +16,6 @@ import { CompanyModule } from './company/company.module';
 import { PollresultModule } from './pollresult/pollresult.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
-import { CrmModule } from './crm/crm.module';
 import { CostumerModule } from './costumer/costumer.module';
 import { ProductModule } from './product/product.module';
 // import { CrmService } from './crm/crm.service';
@@ -32,8 +31,7 @@ import { ProductModule } from './product/product.module';
     PollresultModule,
     ChatModule,
     CostumerModule,
-    ProductModule,
-    CrmModule
+    ProductModule
     ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],
