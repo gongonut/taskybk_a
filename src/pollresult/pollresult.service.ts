@@ -61,6 +61,7 @@ export class PollresultService {
     if (updatePollresultDto.ended) {
 
     }
+    updatePollresultDto.status_date = (new Date()).getTime();
     return await this.pollResultModel.findByIdAndUpdate(id, updatePollresultDto);
   }
 
@@ -79,7 +80,36 @@ export class PollresultService {
   }
 
   async remove(id: string) {
+    const newdPlresult = await this.pollResultModel.findById(id);
+    const { _id, staff__id, pollGrp_id, status } = newdPlresult;
+    const adata = { status, pollGrp_id }
+    await this.chatcmd.handleNotifCMD('pollresult', _id.toString(), staff__id, staff__id, adata);
     return await this.pollResultModel.findByIdAndRemove(id);
+  }
+
+  async findByStaffResult(staff__id: string, status: number, date_ini: number, date_end: number) {
+    // let result = [];
+    const options = { status: status };
+    options['staff__id'] = staff__id;
+    if (date_ini > 0 && date_end > 0) {
+      options['date_ini'] = { $gt: date_ini };
+      options['date_end'] = { $lt: date_end };
+    }
+    const result = [];
+    (await this.pollResultModel.find(options).sort({ 'date_ini': 1 }))
+      .forEach(pr => {
+        result.push({
+          _id: pr._id,
+          activity_logo: pr.pollGrpLogo || '',
+          activity_name: pr.pollGrpName,
+          date_end: pr.date_end,
+          date_ini: pr.date_ini,
+          price: pr.price || 0,
+          status: pr.status,
+          status_date: pr.status_date,
+        })
+      });
+    return { status: 200, data: result };
   }
 
   async findByAnalitic(crm: string, staff__idList: string[], pollGrpList: string[], costumList: string[], prodList: string[], date_ini: number, date_end: number) {
@@ -115,8 +145,6 @@ export class PollresultService {
       // result = await this.pollResultModel.find(options).sort({ 'date_ini': 1 });
       return { status: 200, data: await this.result2activity(options) };
     }
-
-
   }
 
   async result2crm(options: any) {
@@ -125,17 +153,14 @@ export class PollresultService {
       .forEach(pr => {
         result.push({
           _id: pr._id,
-          // costumer_id: pr.crm_costum_id,
-          costumer_name: pr.crm_costum_name,
-          crm_products: pr.crm_prod_name,
-          date_end: pr.date_end,
           date_ini: pr.date_ini,
-          id: pr.id,
-          activity_id: pr.pollGrp_id,
-          activity_name: pr.pollGrpName,
+          date_end: pr.date_end,
           tasker_id: pr.staffId,
           tasker_name: pr.staff_name || 'Sin nombre',
-          // crm_prod_name: pr.crm_prod_name,
+          activity_id: pr.pollGrp_id,
+          activity_name: pr.pollGrpName,
+          costumer_name: pr.crm_costum_name,
+          crm_products: pr.crm_prod_name,
         })
       });
     return result;
@@ -143,41 +168,23 @@ export class PollresultService {
 
   async result2activity(options: any) {
     const result = [];
+    // const resultM = {};
+    let headResult = {};
     // let total = 0;
     // let header: any;
     (await this.pollResultModel.find(options).sort({ 'date_ini': 1 }))
       .forEach(pr => {
-        result.push({
-          _id: pr._id,
+        const item = {_id: pr._id,
           date_end: pr.date_end,
           geoLocEnd: pr.geoLocEnd,
           date_ini: pr.date_ini,
           geoLocStart: pr.geoLocStart,
           tasker_name: pr.staff_name || 'Sin nombre',
-          ...pr.values
-        });
-
-        /*
-        if (Object.keys(npr).length > total) {
-          header = npr;
-          total = Object.keys(npr).length;
-        }
-        */
-
-        // delete (mypr.values);
-        /*
-        result.push({
-          _id: pr._id,
-          date_end: pr.date_end,
-          geoLocEnd: pr.geoLocEnd,
-          date_ini: pr.date_ini,
-          geoLocStart: pr.geoLocStart,
-          tasker_name: pr.staff_name || 'Sin nombre',
-          values: pr.values
-        })
-        */
+          ...pr.values}
+        result.push(item);
+        headResult = { ...headResult, ...item }
       });
-      // if (header) header['_id'] = 'header'; {result.push(header);}
+    result.unshift(headResult);
     return result;
   }
 

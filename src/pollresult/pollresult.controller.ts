@@ -110,6 +110,17 @@ export class PollresultController {
     }
   }
 
+  @Roles('K')
+  @UseGuards(RolesGuard)
+  @Get('staffresult/data?')
+  async findByStaffResult(
+    @Query('status') status: number,
+    @Query('date_ini') date_ini: number,
+    @Query('date_end') date_end: number,
+    @User() user: any) {
+    return await this.pollresultService.findByStaffResult(user.id, status, +date_ini, +date_end);
+  }
+
   @Get('analitic/data?')
   async findByAnalitic(
     @Query('crm') crm: string,
