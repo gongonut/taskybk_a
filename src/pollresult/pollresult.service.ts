@@ -172,6 +172,7 @@ export class PollresultService {
     const result = [];
     // const resultM = {};
     let headResult = {};
+    let varType = {};
     // let total = 0;
     // let header: any;
     (await this.pollResultModel.find(options).sort({ 'date_ini': 1 }))
@@ -185,6 +186,7 @@ export class PollresultService {
           ...pr.values}
         result.push(item);
         headResult = { ...headResult, ...item }
+        varType = {...varType, ...pr.values_type}
       });
     result.unshift(headResult);
     return result;

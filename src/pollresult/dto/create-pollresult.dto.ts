@@ -53,12 +53,10 @@ export class CreatePollresultDto {
     ended: boolean;
 
     @IsOptional()
-    @IsString()
-    geoLocEnd?: string;
+    geoLocEnd?: object;
 
     @IsOptional()
-    @IsString()
-    geoLocStart?: string;
+    geoLocStart?: object;
 
     @IsOptional()
     @IsBoolean()
@@ -114,6 +112,9 @@ export class CreatePollresultDto {
 
     @IsOptional()
     values?: any;
+
+    @IsOptional()
+    values_type?: any;
 
     @IsOptional()
     metaValues?: any;

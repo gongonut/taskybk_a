@@ -12,16 +12,17 @@ export class CompanyService {
   ) { }
 
   async findOne() {
-    const companyData: CreateCompanyDto = { id: 'only' };
-    const query = { id: 'only' }
-    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    return await this.companyModel.findOneAndUpdate(query, companyData, options);
+    const company = await this.companyModel.findOne({ id: 'only' });
+    if (!company) {
+      const companyData: CreateCompanyDto = { id: 'only' };
+      const createdCompany = await new this.companyModel(companyData);
+      return await createdCompany.save();
+    }
+    return company;
   }
 
   async update(updateGeneralDto: UpdateCompanyDto) {
-    // return await this.generalModel.findByIdAndUpdate(id, updateQuoteDto, {new: true} );
-    return await this.companyModel.replaceOne({ id: 'only' }, updateGeneralDto, { upsert: true }
-    );
+    return await this.companyModel.findOneAndUpdate({ id: 'only' }, updateGeneralDto, { new: true });
   }
 
   /*

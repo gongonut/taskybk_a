@@ -47,11 +47,11 @@ export class PollResult {
     @Prop()
     ended: boolean;
 
-    @Prop()
-    geoLocEnd?: string;
+    @Prop({ type: Object })
+    geoLocEnd?: any;
 
-    @Prop()
-    geoLocStart?: string;
+    @Prop({ type: Object })
+    geoLocStart?: any;
 
     @Prop()
     newChat?: boolean;
@@ -101,6 +101,9 @@ export class PollResult {
 
     @Prop({ type: Object })
     values?: { [index: string]: any };
+
+    @Prop({ type: Object })
+    values_type?: { [index: string]: any };
 
     @Prop({ type: Object })
     metaValues?: { [index: string]: any };
