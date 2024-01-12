@@ -98,7 +98,7 @@ export class PollresultService {
     const result = [];
     (await this.pollResultModel.find(options).sort({ 'date_ini': 1 }))
       .forEach(pr => {
-        
+
         result.push({
           _id: pr._id,
           activity_logo: pr.pollGrpLogo || '',
@@ -151,12 +151,27 @@ export class PollresultService {
 
   async result2crm(options: any) {
     const result = [];
+    const headResult = {
+      _id: 'text',
+      date_ini: 'datetime-local',
+      geoLocStart: 'geolocation',
+      date_end: 'datetime-local',
+      geoLocEnd: 'geolocation',
+      tasker_id: 'text',
+      tasker_name: 'text',
+      activity_id: 'text',
+      activity_name: 'text',
+      costumer_name: 'text',
+      crm_products: 'array'
+    };
     (await this.pollResultModel.find(options).sort({ 'date_ini': 1 }))
       .forEach(pr => {
         result.push({
           _id: pr._id,
           date_ini: pr.date_ini,
+          geoLocStart: pr.geoLocStart,
           date_end: pr.date_end,
+          geoLocEnd: pr.geoLocEnd,
           tasker_id: pr.staffId,
           tasker_name: pr.staff_name || 'Sin nombre',
           activity_id: pr.pollGrp_id,
@@ -165,28 +180,38 @@ export class PollresultService {
           crm_products: pr.crm_prod_name,
         })
       });
+    result.unshift(headResult);
     return result;
   }
 
   async result2activity(options: any) {
     const result = [];
     // const resultM = {};
-    let headResult = {};
-    let varType = {};
+    let headResult = {
+      _id: 'text',
+      date_ini: 'datetime-local',
+      geoLocStart: 'geolocation',
+      date_end: 'datetime-local',
+      geoLocEnd: 'geolocation',
+      tasker_name: 'text'
+    };
+    // let varType = {};
     // let total = 0;
     // let header: any;
     (await this.pollResultModel.find(options).sort({ 'date_ini': 1 }))
       .forEach(pr => {
-        const item = {_id: pr._id,
-          date_end: pr.date_end,
-          geoLocEnd: pr.geoLocEnd,
+        const item = {
+          _id: pr._id,
           date_ini: pr.date_ini,
           geoLocStart: pr.geoLocStart,
+          date_end: pr.date_end,
+          geoLocEnd: pr.geoLocEnd,
           tasker_name: pr.staff_name || 'Sin nombre',
-          ...pr.values}
+          ...pr.values
+        }
         result.push(item);
-        headResult = { ...headResult, ...item }
-        varType = {...varType, ...pr.values_type}
+        // headResult = { ...headResult, ...item }
+        headResult = { ...headResult, ...pr.values_type }
       });
     result.unshift(headResult);
     return result;
