@@ -120,6 +120,10 @@ export class CreatePollsGroupDto {
     @IsNotEmpty()
     skills: string[]; // Lista de habilidades requeridas
 
+    @IsString()
+    @IsNotEmpty()
+    staff_admin_id: string;
+
     @IsOptional()
     @IsNumber()
     stars?: number; // Minimo de estrellas del staff

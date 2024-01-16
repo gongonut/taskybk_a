@@ -7,6 +7,8 @@ export type CostumerDocument = HydratedDocument<Costumer>;
 
 @Schema()
 export class Costumer {
+    @Prop()
+    active: boolean;
 
     @Prop()
     address?: string;

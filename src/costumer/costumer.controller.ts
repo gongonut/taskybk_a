@@ -29,6 +29,11 @@ export class CostumerController {
     await this.costumerService.excel2Costum(file);
   }
 
+  @Get('active')
+  findActive() {
+    return this.costumerService.findActive();
+  }
+
   @Get()
   findAll() {
     return this.costumerService.findAll();

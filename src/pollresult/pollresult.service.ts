@@ -79,6 +79,11 @@ export class PollresultService {
     return await this.pollResultModel.findByIdAndUpdate(id, { $set: { chats, status } });
   }
 
+  updatePartGrp(pollGrp_id: string, data: any) {
+    const {pollGrpLogo, pollGrpName} = data;
+    return this.pollResultModel.updateMany({pollGrp_id: pollGrp_id}, {$set: {pollGrpLogo: pollGrpLogo, pollGrpName: pollGrpName}})
+  }
+
   async remove(id: string) {
     const newdPlresult = await this.pollResultModel.findById(id);
     const { _id, staff__id, pollGrp_id, status } = newdPlresult;

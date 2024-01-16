@@ -28,15 +28,16 @@ export class CostumerService {
       const staffRowC = worksheetCostum.actualRowCount; // determine the range of populated data
       for (let i = headerRows; i <= staffRowC; i++) {
         const formData = {
-          'name': worksheetCostum.getRow(i).getCell(1).text || '',
-          'id': worksheetCostum.getRow(i).getCell(2).text || '',
-          'linkup_1': worksheetCostum.getRow(i).getCell(3).text || '',
-          'phone_1': worksheetCostum.getRow(i).getCell(4).text || '',
-          'email_1': worksheetCostum.getRow(i).getCell(5).text || '',
-          'linkup_2': worksheetCostum.getRow(i).getCell(6).text || '',
-          'phone_2': worksheetCostum.getRow(i).getCell(7).text || '',
-          'email_2': worksheetCostum.getRow(i).getCell(8).text || '',
-          'address': worksheetCostum.getRow(i).getCell(9).text || '',
+          'active': worksheetCostum.getRow(i).getCell(1).text || 'true',
+          'name': worksheetCostum.getRow(i).getCell(2).text || '',
+          'id': worksheetCostum.getRow(i).getCell(3).text || '',
+          'linkup_1': worksheetCostum.getRow(i).getCell(4).text || '',
+          'phone_1': worksheetCostum.getRow(i).getCell(5).text || '',
+          'email_1': worksheetCostum.getRow(i).getCell(6).text || '',
+          'linkup_2': worksheetCostum.getRow(i).getCell(7).text || '',
+          'phone_2': worksheetCostum.getRow(i).getCell(8).text || '',
+          'email_2': worksheetCostum.getRow(i).getCell(9).text || '',
+          'address': worksheetCostum.getRow(i).getCell(10).text || '',
           // 'email': worksheetCostum.getRow(i).getCell(10).value,
         }
         thisArray.push(formData as unknown as Costumer);
@@ -52,6 +53,10 @@ export class CostumerService {
 
   findAll() {
     return this.costumerModel.find().exec();
+  }
+
+  findActive() {
+    return this.costumerModel.find({ active: true}).exec();
   }
 
   async findOne(id: string) {

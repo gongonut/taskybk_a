@@ -166,6 +166,14 @@ export class PollresultController {
     return this.pollresultService.updatePartial(id, data, user);
   }
 
+  @Roles('P')
+  @UseGuards(RolesGuard)
+  @Put('partial_pollgrp/:pollGrp_id')
+  updatePartGrp(@Param('pollGrp_id') pollGrp_id: string, @Body() data: any) {
+    return this.pollresultService.updatePartGrp(pollGrp_id, data);
+  }
+  
+
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.pollresultService.remove(id);

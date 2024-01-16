@@ -102,6 +102,9 @@ export class PollGroups {
     skills: string[]; // Lista de habilidades requeridas
 
     @Prop()
+    staff_admin_id: string;
+
+    @Prop()
     stars?: number; // Minimo de estrellas del staff
 
     @Prop()

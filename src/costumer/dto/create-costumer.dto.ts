@@ -1,6 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateCostumerDto {
+
+    @IsBoolean()
+    @IsNotEmpty()
+    active: boolean;
 
     @IsOptional()
     @IsString()
