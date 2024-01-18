@@ -1,58 +1,20 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 
 export class CreateChatDto {
 
-    @IsOptional()
-    @IsNumber()
-    date?: number;
-
-    @IsOptional()
     @IsString()
-    msg?: string; // Mensaje
+    collection: string;
 
-    @IsOptional()
     @IsString()
-    PollGrp_id?: string; // Si "all"
+    field_id: string;
 
-    @IsOptional()
-    @IsNumber()
-    pos?: number; // 1
+    @IsString()
+    user_id: string;
+
+    @IsString()
+    usert_id: string;
 
     @IsOptional()
-    @IsString()
-    staffId?: string;
-
-    @IsOptional()
-    @IsString()
-    type?: string; // T: tasker, W: Window, D: Comando la información viene en el mensaje
-
-    @IsOptional()
-    @IsBoolean()
-    visible?: boolean;
-
-    /*
-    @IsNotEmpty()
-    @IsString()
-    pollGrp_Id: string;
-
-    @IsNotEmpty()
-    @IsString()
-    pollResult_Id: string;
-
-    @IsNotEmpty()
-    @IsString()
-    pollStaff_Id: string;
-
-    @IsNotEmpty()
-    @IsString()
-    socket_id: string;
-
-    @IsNotEmpty()
-    @IsString()
-    rol: string; // C: Controler T: Tasker, M: Master
-
-    @IsOptional()
-    chats: object[]
-    */
+    data: any
     
 }

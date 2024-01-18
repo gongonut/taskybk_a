@@ -6,18 +6,10 @@ export class CreateCostumerDto {
     @IsNotEmpty()
     active: boolean;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
-    address?: string;
-
-    @IsOptional()
-    @IsString()
-    email_1?: string;
-
-    @IsOptional()
-    @IsString()
-    email_2?: string;
-
+    name: string;
+    
     @IsNotEmpty()
     @IsString()
     id: string;
@@ -28,17 +20,25 @@ export class CreateCostumerDto {
 
     @IsOptional()
     @IsString()
-    linkup_2?: string;
-
-    @IsNotEmpty()
-    @IsString()
-    name: string;
-
-    @IsOptional()
-    @IsString()
     phone_1?: string;
 
     @IsOptional()
     @IsString()
+    email_1?: string;
+
+    @IsOptional()
+    @IsString()
+    linkup_2?: string;
+
+    @IsOptional()
+    @IsString()
     phone_2?: string;
+
+    @IsOptional()
+    @IsString()
+    email_2?: string;
+
+    @IsOptional()
+    @IsString()
+    address?: string;
 }

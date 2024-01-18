@@ -11,13 +11,7 @@ export class Costumer {
     active: boolean;
 
     @Prop()
-    address?: string;
-
-    @Prop()
-    email_1?: string;
-
-    @Prop()
-    email_2?: string;
+    name: string;
 
     @Prop()
     id: string;
@@ -26,17 +20,22 @@ export class Costumer {
     linkup_1?: string;
 
     @Prop()
-    linkup_2?: string;
-
-    @Prop()
-    name: string;
-
-    @Prop()
     phone_1?: string;
+
+    @Prop()
+    email_1?: string;
+
+    @Prop()
+    linkup_2?: string;
 
     @Prop()
     phone_2?: string;
 
+    @Prop()
+    email_2?: string;
+
+    @Prop()
+    address?: string;
 }
 
 export const CostumerSchema = SchemaFactory.createForClass(Costumer);
