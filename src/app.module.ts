@@ -22,7 +22,7 @@ import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({isGlobal: true}),
     MongooseModule.forRoot(process.env.MONGO_URL),
     MailModule,
     PollsGroupModule,

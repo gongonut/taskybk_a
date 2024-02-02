@@ -80,8 +80,8 @@ export class PollresultService {
   }
 
   updatePartGrp(pollGrp_id: string, data: any) {
-    const {pollGrpLogo, pollGrpName} = data;
-    return this.pollResultModel.updateMany({pollGrp_id: pollGrp_id}, {$set: {pollGrpLogo: pollGrpLogo, pollGrpName: pollGrpName}})
+    const { pollGrpLogo, pollGrpName } = data;
+    return this.pollResultModel.updateMany({ pollGrp_id: pollGrp_id }, { $set: { pollGrpLogo: pollGrpLogo, pollGrpName: pollGrpName } })
   }
 
   async remove(id: string) {

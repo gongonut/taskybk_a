@@ -3,11 +3,11 @@ import { PollsGroupService } from './polls-group.service';
 import { PollsGroupController } from './polls-group.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import {PollGroups , PollsGrpSchema } from './schemas/prollsgroup.shemas';
-import { ConfigModule } from '@nestjs/config';
+// import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    // ConfigModule.forRoot(),
     MongooseModule.forFeature([{ name: PollGroups.name, schema: PollsGrpSchema }]),
   ],
   controllers: [PollsGroupController],

@@ -2,14 +2,12 @@ import { Module } from '@nestjs/common';
 // import { MongooseModule } from '@nestjs/mongoose';
 // import { Chat, ChatSchema } from './schemas/chat.schema';
 import { ChatGateway } from './chat.gateway';
-import { ConfigModule } from '@nestjs/config';
+// import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    // MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }])
+    // ConfigModule.forRoot(),
   ],
-  // controllers: [PollExecuteController],
   providers: [ChatGateway],
   exports: [ChatGateway]
 })
