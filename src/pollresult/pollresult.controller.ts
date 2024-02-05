@@ -17,12 +17,11 @@ export class PollresultController {
   @Get('picture/:imagename')
   getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
     const upr = imagename.toUpperCase().split('__');
-    let apath = '';
-    if (process.env.DEV_STATUS) {
-      apath = join(__dirname, '..', process.env.DEFA_DIR, upr[0], upr[1]);
-    } else {
-      apath = join(process.env.RAILWAY_VOLUME_MOUNT_PATH, upr[0], upr[1]);
+    let apath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
+    if (process.env.DEV_STATUS === 'true') {
+      apath = process.env.DEFA_DIR;
     }
+    apath = join(__dirname, apath, upr[0], upr[1]);
 
     return of(res.sendFile(apath));
   }
@@ -30,12 +29,10 @@ export class PollresultController {
   @Post('pictures1')
   @UseInterceptors(FilesInterceptor('files'))
   uploadFiles1(@UploadedFiles() files: Array<Express.Multer.File>) {
-    let apath = '';
-    if (process.env.DEV_STATUS) {
-      apath = join(__dirname, '..', process.env.DEFA_DIR);
+    let apath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
+    if (process.env.DEV_STATUS === 'true') {
+      apath = join(__dirname, process.env.DEFA_DIR);
       if (!fs.existsSync(apath)) { fs.mkdirSync(apath); }
-    } else {
-      apath = process.env.RAILWAY_VOLUME_MOUNT_PATH; // process.env.DEFA_DIR solo esta ruta
     }
     const dir = files[0].originalname.toUpperCase();
     apath = join(apath, dir);

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MailService } from './mail.service';
-// import { ConfigModule } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { EmailController } from './mail.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
@@ -8,7 +8,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 
 @Module({
   imports: [
-    // ConfigModule.forRoot(),
+    ConfigModule.forRoot(),
     MailerModule.forRoot({
       transport: {
         host: process.env.SMPT_EMAIL_LONG,
