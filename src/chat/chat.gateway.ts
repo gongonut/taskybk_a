@@ -36,14 +36,13 @@ export interface CollectionNotification {
 }
 
 // @WebSocketGateway(Number(process.env.CHAT_PORT), { cors: { origin: '*' } })
-@WebSocketGateway()
+@WebSocketGateway({ cors: { origin: '*', }})
 export class ChatGateway {
 
-  constructor(private readonly authChatServices: AuthChatServices) {
-
-  }
+  constructor(private readonly authChatServices: AuthChatServices) {}
 
   @WebSocketServer() server: Server;
+
   // ................... MEMORY DATA BASE MEMORY DATA BASE MEMORY DATA BASE .....................
 
   private notification: Array<NotifPayLoad> = [];
@@ -153,7 +152,9 @@ export class ChatGateway {
       ) { this.server.to(sklist.socket_id).emit('dtb-notification', collectPayLoad); }
     });
     // this.server.emit('dtb-notification', collectPayLoad);
+    // client.broad
   }
+
 
   // ............................................................................................
 

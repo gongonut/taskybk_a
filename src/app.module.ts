@@ -18,6 +18,7 @@ import { PollresultModule } from './pollresult/pollresult.module';
 import { ChatModule } from './chat/chat.module';
 import { CostumerModule } from './costumer/costumer.module';
 import { ProductModule } from './product/product.module';
+import { ChatbotModule } from './chatbot/chatbot.module';
 // import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
 // import { CrmService } from './crm/crm.service';
 
@@ -33,7 +34,8 @@ import { ProductModule } from './product/product.module';
     PollresultModule,
     ChatModule,
     CostumerModule,
-    ProductModule
+    ProductModule,
+    ChatbotModule
     ],
   controllers: [AppController],
   providers: [AppService],
