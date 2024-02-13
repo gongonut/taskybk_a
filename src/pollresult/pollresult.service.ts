@@ -4,7 +4,9 @@ import { UpdatePollresultDto } from './dto/update-pollresult.dto';
 import { PollResult } from './schemas/pollresult.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ChatGateway } from 'src/chat/chat.gateway';
+import { ChatGateway, DbState } from 'src/chat/chat.gateway';
+import { Payload } from 'src/datatypes';
+// import { DbState } from 'src/datatypes';
 // import { CrmService } from 'src/crm/crm.service';
 
 @Injectable()
@@ -16,18 +18,11 @@ export class PollresultService {
     // @Inject(CrmService) private crmService: CrmService
   ) { }
 
-  async create(createPollresultDto: CreatePollresultDto) {
+  async create(createPollresultDto: CreatePollresultDto, user: Payload) {
     const newdPlresult = await new this.pollResultModel(createPollresultDto);
-
-    /*
-    if (newdPlresult.crm['costumer'] && newdPlresult.crm['product']) {
-      await this.crmService.create(newdPlresult, newdPlresult._id.toString());
-    }
-    */
-
     const { _id, staff__id, pollGrp_id, status } = newdPlresult;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD('pollresult', _id.toString(), staff__id, staff__id, adata);
+    await this.chatcmd.handleNotifCMD(DbState.insert, 'pollresult', _id.toString(), user, staff__id, adata);
     return newdPlresult.save();
   }
 
@@ -57,7 +52,7 @@ export class PollresultService {
   async update(id: string, updatePollresultDto: UpdatePollresultDto, user: any) {
     const { staff__id, pollGrp_id, status } = updatePollresultDto;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD('pollresult', id, user.staff__id, staff__id, adata);
+    await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user.staff__id, staff__id, adata);
     if (updatePollresultDto.ended) {
 
     }
@@ -70,11 +65,11 @@ export class PollresultService {
 
     if (fieldName === 'status') {
       const adata = { status, pollGrp_id }
-      await this.chatcmd.handleNotifCMD('pollresult', id, user.id, staff__id, adata);
+      await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user, staff__id, adata);
     } else {
       const msg = chats[chats.length - 1];
       const adata = { status, pollGrp_id, pollGrpName, staff_name, msg }
-      await this.chatcmd.handleNotifCMD('chat', id, user.id, staff__id, adata);
+      await this.chatcmd.handleNotifCMD(DbState.update, 'chat', id, user, staff__id, adata);
     }
     return await this.pollResultModel.findByIdAndUpdate(id, { $set: { chats, status } });
   }
@@ -84,11 +79,11 @@ export class PollresultService {
     return this.pollResultModel.updateMany({ pollGrp_id: pollGrp_id }, { $set: { pollGrpLogo: pollGrpLogo, pollGrpName: pollGrpName } })
   }
 
-  async remove(id: string) {
+  async remove(id: string, user: Payload) {
     const newdPlresult = await this.pollResultModel.findById(id);
     const { _id, staff__id, pollGrp_id, status } = newdPlresult;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD('pollresult', _id.toString(), staff__id, staff__id, adata);
+    await this.chatcmd.handleNotifCMD(DbState.delete, 'pollresult', _id.toString(), user, staff__id, adata);
     return await this.pollResultModel.findByIdAndRemove(id);
   }
 
@@ -142,10 +137,6 @@ export class PollresultService {
     if (prodList.length > 0) {
       options['crm_prod_id'] = { $in: prodList };
     }
-
-    // options.sort = {date_ini:1}
-    // .sort({date_ini:1}
-    // console.log(crm)
     if (crm && crm === 'T') {
       return { status: 200, data: await this.result2crm(options) };
     } else {

@@ -14,16 +14,18 @@ import { PollsGroupModule } from './polls-group/polls-group.module';
 import { StaffModule } from './staff/staff.module';
 import { CompanyModule } from './company/company.module';
 import { PollresultModule } from './pollresult/pollresult.module';
-import { ChatGateway } from './chat/chat.gateway';
+// import { ChatGateway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
 import { CostumerModule } from './costumer/costumer.module';
 import { ProductModule } from './product/product.module';
+// import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
 // import { CrmService } from './crm/crm.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGO_URL),
+    // InMemoryDBModule.forRoot({}),
     MailModule,
     PollsGroupModule,
     StaffModule,
@@ -34,6 +36,6 @@ import { ProductModule } from './product/product.module';
     ProductModule
     ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService],
 })
 export class AppModule {}

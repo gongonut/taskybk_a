@@ -6,6 +6,7 @@ import { RolesGuard } from './roles.guard';
 import { Roles } from './roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { User } from './user.decorator';
 
 @Controller('staff')
 export class StaffController {
@@ -14,8 +15,8 @@ export class StaffController {
   @Roles('F')
   @UseGuards(RolesGuard)
   @Post()
-  create(@Body() createStaffDto: CreateStaffDto) {
-    return this.staffService.create(createStaffDto);
+  create(@Body() createStaffDto: CreateStaffDto, @User() user: any) {
+    return this.staffService.create(createStaffDto, user);
   }
 
   @Post('login')
@@ -28,20 +29,6 @@ export class StaffController {
   @Get('filter/data?')
   findByQuery(@Query() filterQuery: any) {
     return this.staffService.findByQueryFilter(filterQuery);
-
-
-    /*
-    const { queryType, active, stars, rol } = filterQuery;
-    switch (Number(queryType)) {
-      case 1: // Active
-        return this.staffService.findByActive(active, rol);
-        break;
-      case 2: // stars
-        return this.staffService.findByStars(stars, rol);
-        break;
-    }
-    return this.staffService.findAll();
-    */
   }
 
   // ........................... LISTADO DE STAFF EN EXCEL ............................
@@ -75,14 +62,14 @@ export class StaffController {
   @Roles('A')
   @UseGuards(RolesGuard)
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {
-    return this.staffService.update(id, updateStaffDto);
+  update(@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto, @User() user: any) {
+    return this.staffService.update(id, updateStaffDto, user);
   }
 
   @Roles('F')
   @UseGuards(RolesGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.staffService.remove(id);
+  remove(@Param('id') id: string,  @User() user: any) {
+    return this.staffService.remove(id, user);
   }
 }

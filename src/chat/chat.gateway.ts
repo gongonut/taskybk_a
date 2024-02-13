@@ -1,3 +1,4 @@
+// import { Inject } from '@nestjs/common';
 import {
   // OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit,
   SubscribeMessage,
@@ -5,9 +6,25 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { NotifPayLoad } from './entities/notification.entity';
+import { AuthChatServices } from 'src/chat/jwt.authChatservices';
+import { Payload } from 'src/datatypes';
+
+export enum DbState {
+  insert = 'insert',
+  update = 'update',
+  select = 'select',
+  delete = 'delete',
+  none = 'none'
+}
+
+export type NotifPayLoad = {
+  staff__id?: string;
+  rol?: string[]
+  socket_id: string;
+}
 
 export interface CollectionNotification {
+  dbState: DbState;
   collection?: string; // PollGroups, PollResult, ...
   field_id?: string; /// _id de el elemento en la colección
   // fieldId?: string; /// id de el elemento en la colección
@@ -15,16 +32,21 @@ export interface CollectionNotification {
   usert_id?: string; // nombre del origen del cambio
   date?: number; // Fecha de la actualización
   data?: any;
+  OriginalsocketId: string;
 }
 
 // @WebSocketGateway(Number(process.env.CHAT_PORT), { cors: { origin: '*' } })
 @WebSocketGateway()
 export class ChatGateway {
- 
-  @WebSocketServer() server: Server;
-  private notification: Array<NotifPayLoad> = [];
 
+  constructor(private readonly authChatServices: AuthChatServices) {
+
+  }
+
+  @WebSocketServer() server: Server;
   // ................... MEMORY DATA BASE MEMORY DATA BASE MEMORY DATA BASE .....................
+
+  private notification: Array<NotifPayLoad> = [];
 
   getAllSocketId(): Array<string> {
     const result: string[] = [];
@@ -32,15 +54,13 @@ export class ChatGateway {
     return result;
   }
 
-  getAll(): Array<NotifPayLoad> {
-    return this.notification;
-  }
+  getAll(): Array<NotifPayLoad> { return this.notification; }
 
   getById(staff__id: string): NotifPayLoad {
     return this.notification.find((notif) => notif.staff__id === staff__id);
   }
 
-  upCreated(idsocket_id: string, updateCard: any) {
+  upSert(idsocket_id: string, updateCard: any) {
     const indexToUpdate = this.notification.findIndex((notif) => notif.socket_id === idsocket_id);
     if (indexToUpdate >= 0) {
       this.notification[indexToUpdate] = {
@@ -52,24 +72,6 @@ export class ChatGateway {
       this.notification.push(updateCard);
     }
   }
-
-  /*
-  getByPollResult(pollresult_id: string): string[] {
-    const result = [];
-    this.notification.forEach(ntf => {
-      if (ntf.pollresult_ids.includes(pollresult_id)) { result.push(ntf.socket_id) }
-    });
-    return result;
-  }
-
-  getByPollsGroup(pollsgrp_id: string): string[] {
-    const result = [];
-    this.notification.forEach(ntf => {
-      if (ntf.pollresult_ids.includes(pollsgrp_id)) { result.push(ntf.socket_id) }
-    });
-    return result;
-  }
-  */
 
   create(notif: any) {
     notif.id = Date.now();
@@ -95,20 +97,17 @@ export class ChatGateway {
     }
   }
 
-  // .............................................................
+  // ...........................................................................................
 
-  /*
-  afterInit(server: any) {
-    console.log('Esto se ejecuta cuando inicia')
-  }
-  */
-
-  handleConnection(client: any, ...args: any[]) {
-    const updateCard: NotifPayLoad = {
-      socket_id: client.id
-    }
-    this.upCreated(client.id, updateCard);
-    console.log('Hola alguien se conecto al socket', client.id);
+  handleConnection(client: any) {
+    this.authChatServices.getUserFromSocket(client).then(userData => {
+      const updateCard: NotifPayLoad = {
+        socket_id: client.id,
+        staff__id: userData?.id || '',
+        rol: userData?.rol || [],
+      }
+      this.upSert(client.id, updateCard);
+    });
   }
 
   @SubscribeMessage('credential')
@@ -118,67 +117,44 @@ export class ChatGateway {
       socket_id: client.id,
       rol: data.rol.split(',')
     }
-    this.upCreated(client.id, updateCard)
+    this.upSert(client.id, updateCard);
   }
 
   handleDisconnect(client: any) {
     this.delete(client.id)
-    // console.log('ALguien se fue', client.id)
   }
-
-  /*
-  @SubscribeMessage('event_join')
-  handleJoinRoom(client: Socket, room: string) {
-    client.join(`room_${room}`);
-  }
-
-  @SubscribeMessage('event_message') //TODO Backend
-  handleIncommingMessage(
-    client: Socket,
-    payload: { room: string; message: string },
-  ) {
-    const { room, message } = payload;
-    console.log(payload)
-    this.server.to(`room_${room}`).emit('new_message', message);
-  }
-
-  @SubscribeMessage('event_leave')
-  handleRoomLeave(client: Socket, room: string) {
-    console.log(`chao room_${room}`)
-    client.leave(`room_${room}`);
-  }
-  */
 
   // ..............................................................................................
 
-  handleNotifCMD(
+  async handleNotifCMD(
+    dbState: DbState,
     collection: string,
     field_id: string,
-    user_id: string,
-    usert_id: string, // Staff a quien se dirige la accion
+    userData: Payload,
+    usert_id: string, // Staff a quien se dirige la accion, if _broadcast_ a todos
     data: any
   ) {
+    const actualClient = await this.getById(userData.id);
+    if (!actualClient) return;
     // Get list of subscriber clients
-    let soketList: string[] = [];
-    // TODO: TEMPORAL
-    soketList = this.getAllSocketId()
-    /*
-    soketList = this.getByPollResult(pollResult_id);
-    soketList = [...soketList, ...this.getByPollsGroup(pollGrp_id)];
-    */
-    if (soketList.length > 0) {
-      const payload: CollectionNotification = {
-        collection, field_id, user_id, usert_id,
-        date: Date.now(),
-        data
-      }
-      this.server.emit('dtb-notification', payload);
-      /*
-      soketList.forEach(sock_id => {
-        this.server.to(sock_id).emit('dtb-notification', payload);
-      })
-      */
+
+    const soketList = await this.getAll();
+    const collectPayLoad: CollectionNotification = {
+      dbState, collection, field_id, user_id: userData.id, usert_id,
+      date: Date.now(),
+      data,
+      OriginalsocketId: actualClient.socket_id
     }
+    soketList.forEach(sklist => {
+      if (
+        sklist.rol.includes('P') ||
+        usert_id === '_broadcast_' || usert_id === sklist.staff__id ||
+        actualClient.staff__id === usert_id
+      ) { this.server.to(sklist.socket_id).emit('dtb-notification', collectPayLoad); }
+    });
+    // this.server.emit('dtb-notification', collectPayLoad);
   }
+
+  // ............................................................................................
 
 }

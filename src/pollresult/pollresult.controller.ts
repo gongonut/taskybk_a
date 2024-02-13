@@ -45,8 +45,6 @@ export class PollresultController {
     return { status: 200, message: apath }
   }
 
-
-
   @Post('pictures2')
   @UseInterceptors(FilesInterceptor('files'))
   uploadFiles2(@UploadedFiles() files: Array<Express.Multer.File>) {
@@ -59,9 +57,11 @@ export class PollresultController {
     return { status: 200, message: apath }
   }
 
+  @Roles('A')
+  @UseGuards(RolesGuard)
   @Post()
-  async create(@Body() createPollresultDto: CreatePollresultDto) {
-    return await this.pollresultService.create(createPollresultDto);
+  async create(@Body() createPollresultDto: CreatePollresultDto, @User() user: any) {
+    return await this.pollresultService.create(createPollresultDto, user);
   }
 
   @Get('filter/data?')
@@ -145,17 +145,19 @@ export class PollresultController {
     return this.pollresultService.updatePartial(id, data, user);
   }
 
-  @Roles('P')
+  @Roles('A')
   @UseGuards(RolesGuard)
   @Put('partial_pollgrp/:pollGrp_id')
   updatePartGrp(@Param('pollGrp_id') pollGrp_id: string, @Body() data: any) {
     return this.pollresultService.updatePartGrp(pollGrp_id, data);
   }
   
-
+  @Roles('A')
+  @UseGuards(RolesGuard)
+  @Put(':id')
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.pollresultService.remove(id);
+  async remove(@Param('id') id: string, @User() user: any) {
+    return await this.pollresultService.remove(id, user);
   }
 
 

@@ -18,7 +18,6 @@ export class ProductService {
   }
 
   async excel2Product(file: Express.Multer.File) {
-    // console.log(file);
     const thisArray: Product[] = [];
     // const pictArray: string[] = [];
     const workbook = new Workbook();
@@ -47,7 +46,6 @@ export class ProductService {
   findAll() {
     // const all = await this.productModel.find();
     // return all;
-    // console.log(toto);
     return this.productModel.find().exec();
   }
 

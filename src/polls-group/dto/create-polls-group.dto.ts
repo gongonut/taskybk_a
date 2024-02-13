@@ -1,5 +1,4 @@
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-// import { OnStartEnd } from "src/datatypes";
 
 export class CreatePollsGroupDto {
     

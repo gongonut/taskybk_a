@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -7,15 +7,24 @@ import { Model } from 'mongoose';
 import { hash, compare } from 'bcrypt'
 import { JwtService } from '@nestjs/jwt';
 import { Workbook } from 'exceljs';
+import { ChatGateway, DbState } from 'src/chat/chat.gateway';
+import { Payload } from 'src/datatypes';
+// import { DbState } from 'src/datatypes';
 
 @Injectable()
 export class StaffService {
 
-  constructor(@InjectModel(Staff.name) private staffModel: Model<Staff>,
+  constructor(
+    @InjectModel(Staff.name) private staffModel: Model<Staff>,
+    @Inject(ChatGateway) private chatcmd: ChatGateway,
     private jwtAuthServ: JwtService) { }
 
-  async create(createStaffDto: CreateStaffDto): Promise<Staff> {
+  async create(createStaffDto: CreateStaffDto, user: Payload): Promise<Staff> {
     const createdStaff = new this.staffModel(createStaffDto);
+
+    const { _id, names, second_names  } = createdStaff;
+    const adata = { names, second_names }
+    await this.chatcmd.handleNotifCMD(DbState.insert, 'staff', _id.toString(), user, _id.toString(), adata);
     return createdStaff.save();
   }
 
@@ -58,7 +67,7 @@ export class StaffService {
     const checkPass = await compare(password, userStaff.password);
     if (!checkPass) throw new HttpException('INVALID_PASSWORD', 403);
 
-    const payload = { id: userStaff._id, name: userStaff.names, rol: userStaff.rol }
+    const payload: Payload = { id: userStaff._id.toString(), name: userStaff.names, rol: userStaff.rol }
     //     const token = await this.jwtAuthServ.signAsync(payload);
     const token = this.jwtAuthServ.sign(payload);
     const data = { userStaff, token };
@@ -132,18 +141,27 @@ export class StaffService {
     return await this.staffModel.findById(id).exec();
   }
 
-  async update(id: string, updateStaffDto: UpdateStaffDto) {
+  async update(id: string, updateStaffDto: UpdateStaffDto, user: Payload) {
+    
+    const { names, second_names  } = updateStaffDto;
+    const adata = { names, second_names }
+    await this.chatcmd.handleNotifCMD(DbState.update, 'staff', id, user, id, adata);
+
     return await this.staffModel.findByIdAndUpdate(id, updateStaffDto, { new: true });
   }
 
-  async remove(id: string) {
+  async remove(id: string, user: Payload) {
+
+    // const { names, second_names  } = updateStaffDto;
+    const adata = { id }
+    await this.chatcmd.handleNotifCMD(DbState.delete, 'staff', id, user, id, adata);
+
     return await this.staffModel.findByIdAndRemove(id);
   }
 
   // ........................... IMPORT FROM EXCEL ................
 
   async excel2Staff(file: Express.Multer.File) {
-    // console.log(file);
     const staffArray: Staff[] = [];
     // const pictArray: string[] = [];
     const workbook = new Workbook();
