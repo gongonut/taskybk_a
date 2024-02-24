@@ -154,12 +154,9 @@ export class PollresultController {
   
   @Roles('A')
   @UseGuards(RolesGuard)
-  @Put(':id')
   @Delete(':id')
   async remove(@Param('id') id: string, @User() user: any) {
     return await this.pollresultService.remove(id, user);
   }
-
-
 
 }

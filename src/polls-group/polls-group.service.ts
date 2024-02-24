@@ -34,7 +34,23 @@ export class PollsGroupService {
   }
 
   async findByExported(id: string): Promise<PollGroups[]> {
-    return await this.plgpModel.find({ 'exported': true, taskerList: {$in: id}}).exec();
+    const result = [];
+    (await this.plgpModel.find({ 'exported': true, taskerList: { $in: id } }))
+      .forEach(pgr => {
+        result.push({
+          _id: pgr._id,
+          id: pgr.id,
+          client_logo: pgr.client_logo || '',
+          name: pgr.name,
+          description: pgr.description || '',
+          total: pgr.total || 0,
+          executed: pgr.executed || 0,
+          geolocation: pgr.geolocation || '',
+          payxpoll: pgr.payxpoll || 0,
+        })
+      });
+    // return { status: 200, data: result };
+    return result;
   }
 
   async findAll(): Promise<PollGroups[]> {

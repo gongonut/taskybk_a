@@ -98,7 +98,6 @@ export class PollresultService {
     const result = [];
     (await this.pollResultModel.find(options).sort({ 'date_ini': 1 }))
       .forEach(pr => {
-
         result.push({
           _id: pr._id,
           activity_logo: pr.pollGrpLogo || '',

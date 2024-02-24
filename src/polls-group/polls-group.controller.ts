@@ -22,23 +22,29 @@ export class PollsGroupController {
     return await this.pollsGroupService.findByExported(user.id);
   }
 
-  @Roles('D')
+  @Roles('A')
   @UseGuards(RolesGuard)
   @Get(':id')
   async findById(@Param('id') id: string, @User() user: any) {
     return await this.pollsGroupService.findById(id, user);
   }
 
+  @Roles('D')
+  @UseGuards(RolesGuard)
   @Get()
   async findAll() {
     return await this.pollsGroupService.findAll();
   }
 
+  @Roles('D')
+  @UseGuards(RolesGuard)
   @Put(':id')
   async update(@Param('id') id: string, @Body() updatePollsGroupDto: UpdatePollsGroupDto) {
     return await this.pollsGroupService.update(id, updatePollsGroupDto);
   }
 
+  @Roles('D')
+  @UseGuards(RolesGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.pollsGroupService.remove(id);

@@ -67,7 +67,7 @@ export class CreateStaffDto {
     @IsOptional()
     platform?: string; // nequi daviplata 
 
-// K: Es tasker, P: Es supplier, F: Edita staff, U: Edita Usuario, D: Edita PollGroup (directorio) R: edita poll resulto
+// K: Es tasker, P: Es supplier, F: Edita staff, U: Edita Usuario, D: Edita PollGroup (directorio) A: Edita tasker supplier
     @IsOptional()
     rol?: string[]
 
