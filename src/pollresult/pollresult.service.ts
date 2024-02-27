@@ -52,7 +52,7 @@ export class PollresultService {
   async update(id: string, updatePollresultDto: UpdatePollresultDto, user: any) {
     const { staff__id, pollGrp_id, status } = updatePollresultDto;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user.staff__id, staff__id, adata);
+    await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user.id, staff__id, adata);
     if (updatePollresultDto.ended) {
 
     }
@@ -61,7 +61,7 @@ export class PollresultService {
   }
 
   async updatePartial(id: string, data: any, user: any) {
-    const { fieldName, staff__id, chats, status, pollGrp_id, pollGrpName, staff_name } = data;
+    const { fieldName, staff__id, chats, status, pollGrp_id, pollGrpName, staff_name, date_ini } = data;
 
     if (fieldName === 'status') {
       const adata = { status, pollGrp_id }
@@ -71,7 +71,7 @@ export class PollresultService {
       const adata = { status, pollGrp_id, pollGrpName, staff_name, msg }
       await this.chatcmd.handleNotifCMD(DbState.update, 'chat', id, user, staff__id, adata);
     }
-    return await this.pollResultModel.findByIdAndUpdate(id, { $set: { chats, status } });
+    return await this.pollResultModel.findByIdAndUpdate(id, { $set: { date_ini, chats, status } });
   }
 
   updatePartGrp(pollGrp_id: string, data: any) {
@@ -115,7 +115,7 @@ export class PollresultService {
 
   async findByAnalitic(crm: string, staff__idList: string[], pollGrpList: string[], costumList: string[], prodList: string[], date_ini: number, date_end: number) {
     // let result = [];
-    const options = { status: { $gt: 2 } };
+    const options = { status: { $gt: 1 } }; // status > 1 para q incluya que se están ejecutando
     if (date_ini > 0 && date_end > 0) {
       options['date_ini'] = { $gt: date_ini };
       options['date_end'] = { $lt: date_end };
@@ -165,7 +165,7 @@ export class PollresultService {
           _id: pr._id,
           date_ini: pr.date_ini,
           geoLocStart: pr.geoLocStart,
-          date_end: pr.date_end,
+          date_end: pr.date_end || new Date().getTime(),
           geoLocEnd: pr.geoLocEnd,
           tasker_id: pr.staffId,
           tasker_name: pr.staff_name || 'Sin nombre',
