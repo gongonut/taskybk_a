@@ -52,7 +52,7 @@ export class StaffController {
 
       // ****
 
-  @Roles('F')
+  @Roles('A')
   @UseGuards(RolesGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
