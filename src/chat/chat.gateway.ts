@@ -158,4 +158,34 @@ export class ChatGateway {
 
   // ............................................................................................
 
+  async handleChatBot(
+    dbState: DbState,
+    collection: string,
+    field_id: string,
+    userData: Payload,
+    usert_id: string, // Staff a quien se dirige la accion, if _broadcast_ a todos
+    data: any
+  ) {
+    const actualClient = await this.getById(userData.id);
+    if (!actualClient) return;
+    // Get list of subscriber clients
+
+    const soketList = await this.getAll();
+    const collectPayLoad: CollectionNotification = {
+      dbState, collection, field_id, user_id: userData.id, usert_id,
+      date: Date.now(),
+      data,
+      OriginalsocketId: actualClient.socket_id
+    }
+    soketList.forEach(sklist => {
+      if (
+        sklist.rol.includes('P') ||
+        usert_id === '_broadcast_' || usert_id === sklist.staff__id ||
+        actualClient.staff__id === usert_id
+      ) { this.server.to(sklist.socket_id).emit('dtb-notification', collectPayLoad); }
+    });
+    // this.server.emit('dtb-notification', collectPayLoad);
+    // client.broad
+  }
+
 }

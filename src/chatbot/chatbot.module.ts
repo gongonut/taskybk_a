@@ -11,7 +11,7 @@ import { ChatbotService } from './chatbot.service';
 import { IAService } from './IA.service';
 import { ChatbotController } from './chatbot.controller';
 import { Chatbot, ChatbotSchema } from './schemas/chat.schema';
-import { ChatbotGateway } from './chatbot.gateway';
+// import { ChatbotGateway } from './chatbot.gateway';
 // import { BotService } from './IA.service';
 // import { IAService } from './chatbot.service';
 // import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
@@ -24,6 +24,6 @@ import { ChatbotGateway } from './chatbot.gateway';
     ])
   ],
   controllers: [ChatbotController],
-  providers: [ChatbotGateway, ChatbotService, IAService],
+  providers: [ChatbotService, IAService],
 })
 export class ChatbotModule { }

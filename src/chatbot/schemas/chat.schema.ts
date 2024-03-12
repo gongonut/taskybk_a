@@ -1,7 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-
-export type ChatbotDocument = HydratedDocument<Chatbot>;
 
 @Schema()
 export class Chatbot {
@@ -13,7 +10,7 @@ export class Chatbot {
     date_end: number;
 
     @Prop()
-    agents?: string[]; // _id de los agentes que intervienen
+    agents?: string[]; // _id de los AI agentes o administradores que intervienen
 
     @Prop()
     clients?: string[]; // _id de los clientes
@@ -22,7 +19,7 @@ export class Chatbot {
     chats: any[];
 
     @Prop()
-    room: string;
+    room: string; // topic, time
 
 }
 
