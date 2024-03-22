@@ -73,7 +73,7 @@ export class CreateStaffDto {
 
     @IsString()
     @IsOptional()
-    second_names?: string;
+    lastnames?: string;
 
     @IsOptional()
     skills?: string[]; // Lista de habilidades requeridas

@@ -62,7 +62,7 @@ export class Staff {
     rol?: string[]
 
     @Prop()
-    second_names?: string;
+    lastnames?: string;
 
     @Prop()
     skills?: string[]; // Lista de habilidades requeridas

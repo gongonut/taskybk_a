@@ -14,7 +14,7 @@
           "validators": { "required": true }
         },
         {
-          "name": "second_names",
+          "name": "lastnames",
           "label": "Apellidos (s):",
           "type": "text",
           "style": "w-3/4",

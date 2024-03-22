@@ -22,8 +22,8 @@ export class StaffService {
   async create(createStaffDto: CreateStaffDto, user: Payload): Promise<Staff> {
     const createdStaff = new this.staffModel(createStaffDto);
 
-    const { _id, names, second_names  } = createdStaff;
-    const adata = { names, second_names }
+    const { _id, names, lastnames  } = createdStaff;
+    const adata = { names, lastnames }
     await this.chatcmd.handleNotifCMD(DbState.insert, 'staff', _id.toString(), user, _id.toString(), adata);
     return createdStaff.save();
   }
@@ -143,8 +143,8 @@ export class StaffService {
 
   async update(id: string, updateStaffDto: UpdateStaffDto, user: Payload) {
     
-    const { names, second_names  } = updateStaffDto;
-    const adata = { names, second_names }
+    const { names, lastnames  } = updateStaffDto;
+    const adata = { names, lastnames }
     await this.chatcmd.handleNotifCMD(DbState.update, 'staff', id, user, id, adata);
 
     return await this.staffModel.findByIdAndUpdate(id, updateStaffDto, { new: true });
@@ -152,7 +152,7 @@ export class StaffService {
 
   async remove(id: string, user: Payload) {
 
-    // const { names, second_names  } = updateStaffDto;
+    // const { names, lastnames  } = updateStaffDto;
     const adata = { id }
     await this.chatcmd.handleNotifCMD(DbState.delete, 'staff', id, user, id, adata);
 
@@ -177,7 +177,7 @@ export class StaffService {
           'names': worksheetStaff.getRow(i).getCell(1).value,
           'phone': worksheetStaff.getRow(i).getCell(6).value,
           'rol': worksheetStaff.getRow(i).getCell(7).value.toString().split(',').push('A'),
-          'second_names': worksheetStaff.getRow(2).getCell(7).value
+          'lastnames': worksheetStaff.getRow(2).getCell(7).value
         }
         staffArray.push(formData as unknown as Staff);
       }

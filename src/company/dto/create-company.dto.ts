@@ -27,4 +27,7 @@ export class CreateCompanyDto {
     @IsOptional()
     @IsEmail()
     email?: string;
+
+    @IsOptional()
+    appoint?: object[];
 }
