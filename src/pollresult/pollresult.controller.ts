@@ -19,9 +19,9 @@ export class PollresultController {
     const upr = imagename.toUpperCase().split('__');
     let apath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
     if (process.env.DEV_STATUS === 'true') {
-      apath = process.env.DEFA_DIR;
+      apath = join(__dirname, process.env.DEFA_DIR);
     }
-    apath = join(__dirname, apath, upr[0], upr[1]);
+    apath = join(apath, upr[0], upr[1]);
 
     return of(res.sendFile(apath));
   }
