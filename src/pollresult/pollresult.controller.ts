@@ -29,6 +29,7 @@ export class PollresultController {
   @Post('pictures1')
   @UseInterceptors(FilesInterceptor('files'))
   uploadFiles1(@UploadedFiles() files: Array<Express.Multer.File>) {
+    const resultpath: string[] = [];
     let apath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
     if (process.env.DEV_STATUS === 'true') {
       apath = join(__dirname, process.env.DEFA_DIR);
@@ -41,10 +42,12 @@ export class PollresultController {
       const upr = files[i].originalname.toUpperCase();
       const destPath = join(apath, upr);
       fs.writeFileSync(destPath, files[i].buffer);
+      resultpath.push(destPath);
     }
-    return { status: 200, message: apath }
+    return { status: 200, message: resultpath }
   }
 
+  /*
   @Post('pictures2')
   @UseInterceptors(FilesInterceptor('files'))
   uploadFiles2(@UploadedFiles() files: Array<Express.Multer.File>) {
@@ -56,6 +59,7 @@ export class PollresultController {
     })
     return { status: 200, message: apath }
   }
+  */
 
   @Roles('A')
   @UseGuards(RolesGuard)
