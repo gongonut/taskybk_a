@@ -21,6 +21,7 @@ import { ProductModule } from './product/product.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
 // import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
 // import { CrmService } from './crm/crm.service';
+import { CategModule } from './categ/categ.module';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { ChatbotModule } from './chatbot/chatbot.module';
     ChatModule,
     CostumerModule,
     ProductModule,
-    ChatbotModule
+    ChatbotModule,
+    CategModule
     ],
   controllers: [AppController],
   providers: [AppService],

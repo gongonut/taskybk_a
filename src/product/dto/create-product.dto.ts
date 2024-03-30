@@ -13,4 +13,7 @@ export class CreateProductDto {
     @IsNotEmpty()
     @IsString()
     name: string;
+
+    @IsOptional()
+    subprod?: object[];
 }
