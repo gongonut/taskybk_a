@@ -166,15 +166,16 @@ export class ChatGateway {
   ) {
     const actualClient = await this.getById(userData.id);
     if (!actualClient) return;
-    // Target client
-    if (!usert_id) return;
-    const target = usert_id.split(';');
     const collectPayLoad: CollectionNotification = {
       dbState, collection, field_id, user_id: userData.id, usert_id,
       date: Date.now(),
       data,
       OriginalsocketId: actualClient.socket_id
     }
+    this.server.to(actualClient.socket_id).emit('dtb-notification', collectPayLoad);
+    // Target client
+    if (!usert_id) return;
+    const target = usert_id.split(';');
     target.forEach(async t => {
       const tgClient = await this.getById(t);
       if (tgClient) {
