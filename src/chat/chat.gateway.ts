@@ -23,6 +23,13 @@ export type NotifPayLoad = {
   socket_id: string;
 }
 
+type CommandData = {
+  cmd?: string; // nombre del comando
+  user_id?: string;
+  usert_id?: string;
+  content?: any;
+}
+
 export interface CollectionNotification {
   dbState: DbState;
   collection?: string; // PollGroups, PollResult, ...
@@ -36,10 +43,10 @@ export interface CollectionNotification {
 }
 
 // @WebSocketGateway(Number(process.env.CHAT_PORT), { cors: { origin: '*' } })
-@WebSocketGateway({ cors: { origin: '*', }})
+@WebSocketGateway({ cors: { origin: '*', } })
 export class ChatGateway {
 
-  constructor(private readonly authChatServices: AuthChatServices) {}
+  constructor(private readonly authChatServices: AuthChatServices) { }
 
   @WebSocketServer() server: Server;
 
@@ -111,12 +118,36 @@ export class ChatGateway {
 
   @SubscribeMessage('credential')
   handleCredential(client: Socket, data: any) {
+    if (!data.staff__id) return;
     const updateCard: NotifPayLoad = {
       staff__id: data.staff__id,
       socket_id: client.id,
       rol: data.rol.split(',')
     }
     this.upSert(client.id, updateCard);
+  }
+
+  @SubscribeMessage('command')
+  async handleCommand(client: Socket, data: CommandData) {
+    const pl: Payload = { id: data.user_id, name: '', rol: [] };
+    switch (data.cmd) {
+      case 'geoloc':
+      case 'ansgeoloc':
+        await this.handleNotifCMD(DbState.none, data.cmd, '',
+          pl,
+          data.usert_id,
+          data.content)
+        break;
+    }
+
+
+    /*
+    const sourceClient = await this.getById(data.user_id);
+    if (!sourceClient) return;
+    const targetClient = await this.getById(data.usert_id);
+    if (!targetClient) return;
+    this.server.to(targetClient.socket_id).emit('command2', data);
+    */
   }
 
   handleDisconnect(client: any) {
@@ -130,27 +161,55 @@ export class ChatGateway {
     collection: string,
     field_id: string,
     userData: Payload,
-    usert_id: string, // Staff a quien se dirige la accion, if _broadcast_ a todos
+    usert_id: string, // Staff o grupo de staff a quienes se dirige la accion
     data: any
   ) {
     const actualClient = await this.getById(userData.id);
     if (!actualClient) return;
-    // Get list of subscriber clients
-
-    const soketList = await this.getAll();
+    // Target client
+    if (!usert_id) return;
+    const target = usert_id.split(';');
     const collectPayLoad: CollectionNotification = {
       dbState, collection, field_id, user_id: userData.id, usert_id,
       date: Date.now(),
       data,
       OriginalsocketId: actualClient.socket_id
     }
-    soketList.forEach(sklist => {
-      if (
-        sklist.rol.includes('P') ||
-        usert_id === '_broadcast_' || usert_id === sklist.staff__id ||
-        actualClient.staff__id === usert_id
-      ) { this.server.to(sklist.socket_id).emit('dtb-notification', collectPayLoad); }
-    });
+    target.forEach(async t => {
+      const tgClient = await this.getById(t);
+      if (tgClient) {
+        this.server.to(tgClient.socket_id).emit('dtb-notification', collectPayLoad);
+      }
+      
+    })
+
+/*
+    if (usert_id.includes('_broadcast_')) {
+      const soketList = await this.getAll();
+      const collectPayLoad: CollectionNotification = {
+        dbState, collection, field_id, user_id: userData.id, usert_id,
+        date: Date.now(),
+        data,
+        OriginalsocketId: actualClient.socket_id
+      }
+      soketList.forEach(sklist => {
+        if (
+          sklist.rol.includes('P') ||
+          usert_id === '_broadcast_' || usert_id === sklist.staff__id ||
+          actualClient.staff__id === usert_id
+        ) {
+          this.server.to(sklist.socket_id).emit('dtb-notification', collectPayLoad);
+        }
+      });
+    } else {
+      const targetClient = await this.getById(usert_id);
+      if (!targetClient) return;
+    }
+*/
+
+    // Get list of subscriber clients
+
+
     // this.server.emit('dtb-notification', collectPayLoad);
     // client.broad
   }
