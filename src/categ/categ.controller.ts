@@ -8,8 +8,8 @@ export class CategController {
   constructor(private readonly categService: CategService) {}
 
   @Post()
-  create(@Body() createCategDto: CreateCategDto) {
-    return this.categService.create(createCategDto);
+  async create(@Body() createCategDto: CreateCategDto) {
+    return await this.categService.create(createCategDto);
   }
 
   @Get()

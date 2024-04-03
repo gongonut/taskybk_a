@@ -1,26 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCategDto } from './dto/create-categ.dto';
 import { UpdateCategDto } from './dto/update-categ.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Category } from './schemas/categ.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class CategService {
-  create(createCategDto: CreateCategDto) {
-    return 'This action adds a new categ';
+
+  constructor(@InjectModel(Category.name) private categModel: Model<Category>) { }
+
+  async create(createCategDto: CreateCategDto): Promise<Category> {
+    const createdcateg = await new this.categModel(createCategDto);
+    return await createdcateg.save();
   }
 
   findAll() {
-    return `This action returns all categ`;
+    return this.categModel.find().exec();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} categ`;
+    return this.categModel.findById(id).exec();
   }
 
   update(id: number, updateCategDto: UpdateCategDto) {
-    return `This action updates a #${id} categ`;
+    return this.categModel.findByIdAndUpdate(id, updateCategDto, { new: true });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} categ`;
+    return this.categModel.findByIdAndRemove(id);
   }
 }

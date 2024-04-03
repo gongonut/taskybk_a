@@ -130,6 +130,11 @@ export class ChatGateway {
   @SubscribeMessage('command')
   async handleCommand(client: Socket, data: CommandData) {
     const pl: Payload = { id: data.user_id, name: '', rol: [] };
+    await this.handleNotifCMD(DbState.none, data.cmd, '',
+      pl,
+      data.usert_id,
+      data.content)
+    /*
     switch (data.cmd) {
       case 'geoloc':
       case 'ansgeoloc':
@@ -139,6 +144,7 @@ export class ChatGateway {
           data.content)
         break;
     }
+    */
 
 
     /*
@@ -181,32 +187,32 @@ export class ChatGateway {
       if (tgClient) {
         this.server.to(tgClient.socket_id).emit('dtb-notification', collectPayLoad);
       }
-      
+
     })
 
-/*
-    if (usert_id.includes('_broadcast_')) {
-      const soketList = await this.getAll();
-      const collectPayLoad: CollectionNotification = {
-        dbState, collection, field_id, user_id: userData.id, usert_id,
-        date: Date.now(),
-        data,
-        OriginalsocketId: actualClient.socket_id
-      }
-      soketList.forEach(sklist => {
-        if (
-          sklist.rol.includes('P') ||
-          usert_id === '_broadcast_' || usert_id === sklist.staff__id ||
-          actualClient.staff__id === usert_id
-        ) {
-          this.server.to(sklist.socket_id).emit('dtb-notification', collectPayLoad);
+    /*
+        if (usert_id.includes('_broadcast_')) {
+          const soketList = await this.getAll();
+          const collectPayLoad: CollectionNotification = {
+            dbState, collection, field_id, user_id: userData.id, usert_id,
+            date: Date.now(),
+            data,
+            OriginalsocketId: actualClient.socket_id
+          }
+          soketList.forEach(sklist => {
+            if (
+              sklist.rol.includes('P') ||
+              usert_id === '_broadcast_' || usert_id === sklist.staff__id ||
+              actualClient.staff__id === usert_id
+            ) {
+              this.server.to(sklist.socket_id).emit('dtb-notification', collectPayLoad);
+            }
+          });
+        } else {
+          const targetClient = await this.getById(usert_id);
+          if (!targetClient) return;
         }
-      });
-    } else {
-      const targetClient = await this.getById(usert_id);
-      if (!targetClient) return;
-    }
-*/
+    */
 
     // Get list of subscriber clients
 

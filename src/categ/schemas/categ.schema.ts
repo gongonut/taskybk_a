@@ -15,7 +15,7 @@ export class SubCategory extends Document {
     urlpicture: string;
 
     @Prop()
-    descriptionList: [{title: string, content: string}]
+    descriptionList: [{title: string, content_type: string}]
 
 }
 export const SubCategorySchema = SchemaFactory.createForClass(SubCategory);

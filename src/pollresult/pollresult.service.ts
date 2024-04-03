@@ -61,6 +61,7 @@ export class PollresultService {
   }
 
   async updatePartial(id: string, data: any, user: any) {
+    
     const { fieldName, stafft_id, chats, status, pollGrp_id, pollGrpName, staff_name, date_ini } = data;
 
     if (fieldName === 'status') {
