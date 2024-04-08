@@ -4,10 +4,6 @@ export class CreateCategDto {
 
     @IsNotEmpty()
     @IsString()
-    id: string;
-
-    @IsNotEmpty()
-    @IsString()
     name: string;
 
     @IsNotEmpty()
@@ -15,7 +11,11 @@ export class CreateCategDto {
     description?: string;
 
     @IsString()
-    urlpicture: string;
+    @IsOptional()
+    urlpicture?: string;
+
+    @IsOptional()
+    characterList: object[]
 
     @IsOptional()
     subCategory?: object[]

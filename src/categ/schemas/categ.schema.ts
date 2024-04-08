@@ -7,24 +7,19 @@ import { Document } from 'mongoose';
 export class SubCategory extends Document {
     @Prop()
     id: string;
-
     @Prop()
     name: string;
-
     @Prop()
-    urlpicture: string;
-
-    @Prop()
-    descriptionList: [{title: string, content_type: string}]
-
+    urlpicture?: string;
 }
 export const SubCategorySchema = SchemaFactory.createForClass(SubCategory);
 
 // Parent Schema
 @Schema()
 export class Category extends Document {
+
     @Prop()
-    id: string;
+    _id: string;
 
     @Prop()
     name: string;
@@ -33,7 +28,10 @@ export class Category extends Document {
     description?: string;
 
     @Prop()
-    urlpicture: string;
+    urlpicture?: string;
+
+    @Prop()
+    characterList: object[];
 
     @Prop({ type: [SubCategorySchema], default: [] })
     subCategory?: SubCategory[];

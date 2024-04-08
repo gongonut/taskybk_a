@@ -22,6 +22,8 @@ import { ChatbotModule } from './chatbot/chatbot.module';
 // import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
 // import { CrmService } from './crm/crm.service';
 import { CategModule } from './categ/categ.module';
+import { IaResourceModule } from './ia-resource/ia-resource.module';
+import { IoFilesModule } from './io-files/io-files.module';
 
 @Module({
   imports: [
@@ -37,7 +39,9 @@ import { CategModule } from './categ/categ.module';
     CostumerModule,
     ProductModule,
     ChatbotModule,
-    CategModule
+    CategModule,
+    IaResourceModule,
+    IoFilesModule
     ],
   controllers: [AppController],
   providers: [AppService],

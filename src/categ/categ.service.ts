@@ -19,15 +19,15 @@ export class CategService {
     return this.categModel.find().exec();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.categModel.findById(id).exec();
   }
 
-  update(id: number, updateCategDto: UpdateCategDto) {
+  update(id: string, updateCategDto: UpdateCategDto) {
     return this.categModel.findByIdAndUpdate(id, updateCategDto, { new: true });
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.categModel.findByIdAndRemove(id);
   }
 }

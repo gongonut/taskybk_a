@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, Put, UseInterceptors, UploadedFiles, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, Put, UseGuards } from '@nestjs/common';
 import { PollresultService } from './pollresult.service';
 import { CreatePollresultDto } from './dto/create-pollresult.dto';
 import { UpdatePollresultDto } from './dto/update-pollresult.dto';
-import { FilesInterceptor } from '@nestjs/platform-express';
-import { join } from 'path';
-import * as fs from 'fs';
-import { Observable, of } from 'rxjs';
+// import { FilesInterceptor } from '@nestjs/platform-express';
+// import { join } from 'path';
+// import * as fs from 'fs';
+// import { Observable, of } from 'rxjs';
 import { Roles } from 'src/staff/roles.decorator';
 import { RolesGuard } from 'src/staff/roles.guard';
 import { User } from 'src/staff/user.decorator';
@@ -14,6 +14,7 @@ import { User } from 'src/staff/user.decorator';
 export class PollresultController {
   constructor(private readonly pollresultService: PollresultService) { }
 
+  /*
   @Get('picture/:imagename')
   getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
     const upr = imagename.toUpperCase().split('__');
@@ -45,19 +46,6 @@ export class PollresultController {
       resultpath.push(destPath);
     }
     return { status: 200, message: resultpath }
-  }
-
-  /*
-  @Post('pictures2')
-  @UseInterceptors(FilesInterceptor('files'))
-  uploadFiles2(@UploadedFiles() files: Array<Express.Multer.File>) {
-    let apath = '';
-    files.forEach(async image => {
-      const upr = image.originalname.toUpperCase();
-      apath = join('/files', upr);
-      fs.writeFileSync(apath, image.buffer);
-    })
-    return { status: 200, message: apath }
   }
   */
 

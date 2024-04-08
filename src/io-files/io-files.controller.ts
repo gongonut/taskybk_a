@@ -1,25 +1,27 @@
-import { Controller, Get, Post, Body, Param, Delete, Res, UseInterceptors, UploadedFiles, Put } from '@nestjs/common';
-import { CategService } from './categ.service';
-import { CreateCategDto } from './dto/create-categ.dto';
-import { UpdateCategDto } from './dto/update-categ.dto';
+import { Controller, Get, Post, Param, Res, UploadedFiles, UseInterceptors, } from '@nestjs/common';
+import { IoFilesService } from './io-files.service';
 import { join } from 'path';
 import * as fs from 'fs';
 import { Observable, of } from 'rxjs';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
-@Controller('categ')
-export class CategController {
-  constructor(private readonly categService: CategService) {}
+// import { CreateIoFileDto } from './dto/create-io-file.dto';
+// import { UpdateIoFileDto } from './dto/update-io-file.dto';
+
+@Controller('io-files')
+export class IoFilesController {
+  constructor(private readonly ioFilesService: IoFilesService) {}
 
   @Get('picture/:imagename')
   getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
-    const upr = imagename.toUpperCase().split('__');
+    // const upr = imagename.toUpperCase().split('_2d_');
+    const upr = imagename.toUpperCase().replaceAll('_2D_', '/');
     let apath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
     if (process.env.DEV_STATUS === 'true') {
       apath = join(__dirname, process.env.DEFA_DIR);
     }
-    apath = join(apath, upr[0], upr[1]);
-
+    // apath = join(apath, upr[0], upr[1]);
+    apath = join(apath, upr);
     return of(res.sendFile(apath));
   }
 
@@ -44,28 +46,5 @@ export class CategController {
     return { status: 200, message: resultpath }
   }
 
-  @Post()
-  async create(@Body() createCategDto: CreateCategDto) {
-    return await this.categService.create(createCategDto);
-  }
 
-  @Get()
-  findAll() {
-    return this.categService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categService.findOne(id);
-  }
-
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateCategDto: UpdateCategDto) {
-    return this.categService.update(id, updateCategDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categService.remove(id);
-  }
 }
