@@ -174,6 +174,7 @@ export class PollresultService {
           activity_name: pr.pollGrpName,
           costumer_name: pr.crm_costum_name,
           crm_products: pr.crm_prod_name,
+          ended: pr.ended? true : false
         })
       });
     result.unshift(headResult);

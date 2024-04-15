@@ -106,6 +106,9 @@ export class PollResult {
 
     @Prop({ type: Object })
     metaValues?: { [index: string]: any };
+
+    @Prop()
+    attachfiles?: string[];
 }
 
 export const PollsResultSchema = SchemaFactory.createForClass(PollResult);

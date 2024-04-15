@@ -118,4 +118,7 @@ export class CreatePollresultDto {
 
     @IsOptional()
     metaValues?: any;
+
+    @IsOptional()
+    attachfiles?: string[];
 }

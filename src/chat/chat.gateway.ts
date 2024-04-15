@@ -27,7 +27,7 @@ type CommandData = {
   cmd?: string; // nombre del comando
   user_id?: string;
   usert_id?: string;
-  content?: any;
+  data?: any;
 }
 
 export interface CollectionNotification {
@@ -133,7 +133,7 @@ export class ChatGateway {
     await this.handleNotifCMD(DbState.none, data.cmd, '',
       pl,
       data.usert_id,
-      data.content)
+      data.data)
     /*
     switch (data.cmd) {
       case 'geoloc':
