@@ -13,8 +13,9 @@ export class CostumerService {
   constructor(@InjectModel(Costumer.name) private costumerModel: Model<Costumer>,
     private jwtAuthServ: JwtService) { }
 
-  create(createCostumerDto: CreateCostumerDto) {
-    return 'This action adds a new costumer';
+  async create(createCostumerDto: CreateCostumerDto) {
+    const createdProduct = await new this.costumerModel(createCostumerDto);
+    return await createdProduct.save();
   }
 
   async excel2Costum(file: Express.Multer.File) {

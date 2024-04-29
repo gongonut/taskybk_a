@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Characteristics, CharacteristicsSchema } from 'src/categ/schemas/categ.schema';
 
+/*
 // Nested Schema
 @Schema({ _id: false })
 export class Option extends Document { // Talla, color
@@ -19,6 +21,7 @@ export class Option extends Document { // Talla, color
     
 }
 export const OptionSchema = SchemaFactory.createForClass(Option);
+*/
 
 /*
 // Nested Schema
@@ -44,10 +47,10 @@ export class Product extends Document {
     id: string;
 
     @Prop()
-    name: string;
+    description?: string;
 
     @Prop()
-    description?: string;
+    description_long?: string;
 
     @Prop()
     price? : number;
@@ -55,11 +58,20 @@ export class Product extends Document {
     @Prop() // porcentaje
     tax_p? : number;
 
+    /*
     @Prop({ type: [OptionSchema], default: [] })
     options?: Option[];
+    
 
     @Prop()
-    characterList?: object[]
+    prodOptionList?: object[];
+    */
+
+    @Prop()
+    categIds?: {key: string, value: any}[];
+
+    @Prop({ type: [CharacteristicsSchema], default: [] })
+    categList?: Characteristics[];
 
     /*
     @Prop()

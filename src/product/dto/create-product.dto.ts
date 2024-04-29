@@ -6,13 +6,13 @@ export class CreateProductDto {
     @IsString()
     id: string;
 
-    @IsNotEmpty()
-    @IsString()
-    name: string;
-
     @IsOptional()
     @IsString()
     description?: string;
+
+    @IsOptional()
+    @IsString()
+    description_long?: string;
 
     @IsOptional()
     @IsNumber()
@@ -23,8 +23,8 @@ export class CreateProductDto {
     tax_p?: number;
 
     @IsOptional()
-    options?: object[];
+    categIds?: object[]; // id de las categorías a las que pertenece para búsqueda
 
     @IsOptional()
-    characterList?: object[]
+    categList?: object[];
 }

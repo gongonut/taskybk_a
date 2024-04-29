@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateCategDto {
 
@@ -6,17 +6,20 @@ export class CreateCategDto {
     @IsString()
     name: string;
 
+    @IsOptional()
+    picture?: string;
+
     @IsNotEmpty()
     @IsString()
     description?: string;
 
-    @IsString()
     @IsOptional()
-    urlpicture?: string;
+    characterList?: object[];
 
     @IsOptional()
-    characterList: object[]
+    indexCategory?: string[];
 
-    @IsOptional()
-    subCategory?: object[]
+    @IsBoolean()
+    @IsNotEmpty()
+    visible: boolean;
 }

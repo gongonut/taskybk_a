@@ -16,8 +16,9 @@ export class ProductService {
     // @InjectModel(Category.name) private readonly categModel: Model<Category>,
     private jwtAuthServ: JwtService) { }
 
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  async create(createProductDto: CreateProductDto) {
+    const createdProduct = await new this.productModel(createProductDto);
+    return await createdProduct.save();
   }
 
   async excel2Product(file: Express.Multer.File) {
@@ -56,8 +57,8 @@ export class ProductService {
     return `This action returns a #${id} product`;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  update(id: string, updateProductDto: UpdateProductDto) {
+    return this.productModel.findByIdAndUpdate(id, updateProductDto, { new: true });
   }
 
   remove(id: number) {

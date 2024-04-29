@@ -10,8 +10,8 @@ export class CostumerController {
   constructor(private readonly costumerService: CostumerService) {}
 
   @Post()
-  create(@Body() createCostumerDto: CreateCostumerDto) {
-    return this.costumerService.create(createCostumerDto);
+  async create(@Body() createCostumerDto: CreateCostumerDto) {
+    return await this.costumerService.create(createCostumerDto);
   }
 
   @Post('excel2costum')

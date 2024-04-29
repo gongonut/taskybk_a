@@ -49,6 +49,11 @@ export class CategController {
     return await this.categService.create(createCategDto);
   }
 
+  @Get('short')
+  async findAllShort() {
+    return await this.categService.findAllShort();
+  }
+
   @Get()
   findAll() {
     return this.categService.findAll();

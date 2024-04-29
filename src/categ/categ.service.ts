@@ -19,9 +19,19 @@ export class CategService {
     return this.categModel.find().exec();
   }
 
+  async findAllShort() {
+    const result = [];
+    (await this.categModel.find()).forEach(cat => {
+      result.push({_id: cat._id, title: cat.name, parentIndex: cat.indexCategory})
+    });
+    return { status: 200, data: result };
+  }
+
   findOne(id: string) {
     return this.categModel.findById(id).exec();
   }
+
+  
 
   update(id: string, updateCategDto: UpdateCategDto) {
     return this.categModel.findByIdAndUpdate(id, updateCategDto, { new: true });
