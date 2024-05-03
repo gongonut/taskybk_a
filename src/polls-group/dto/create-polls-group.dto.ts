@@ -144,6 +144,9 @@ export class CreatePollsGroupDto {
     @IsNumber()
     total?: number; // Total de encuestas requeridas
 
+    @IsOptional()
+    defa_values?: { [index: string]: any };
+
     @IsNotEmpty()
     @IsBoolean()
     exported: boolean;

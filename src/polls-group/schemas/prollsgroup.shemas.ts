@@ -120,6 +120,9 @@ export class PollGroups {
 
     @Prop()
     total?: number; // Total de encuestas requeridas
+
+    @Prop({ type: Object })
+    defa_values?: any;
     
     @Prop()
     exported: boolean;
