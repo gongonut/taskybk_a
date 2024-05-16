@@ -22,9 +22,20 @@ export class CategService {
   async findAllShort() {
     const result = [];
     (await this.categModel.find()).forEach(cat => {
-      result.push({_id: cat._id, title: cat.name, parentIndex: cat.indexCategory})
+      result.push({_id: cat._id, title: cat.name, parentIndex: cat.indexCategory, visible: cat.visible})
     });
     return { status: 200, data: result };
+  }
+
+  findList(filterQuery: any): Promise<Category[]> {
+    const { catlist } = filterQuery;
+    const options = {};
+    if (catlist && catlist.length > 0) {
+      const acategories = catlist.split(',');
+      options['_id'] = { $in: acategories };
+    }
+    // return this.categModel.findById(id).exec();
+    return this.categModel.find(options)
   }
 
   findOne(id: string) {

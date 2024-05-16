@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Res, UseInterceptors, UploadedFiles, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Res, UseInterceptors, UploadedFiles, Put, Query } from '@nestjs/common';
 import { CategService } from './categ.service';
 import { CreateCategDto } from './dto/create-categ.dto';
 import { UpdateCategDto } from './dto/update-categ.dto';
@@ -52,6 +52,11 @@ export class CategController {
   @Get('short')
   async findAllShort() {
     return await this.categService.findAllShort();
+  }
+
+  @Get('list?')
+  async findList(@Query() filterQuery: any) {
+    return await this.categService.findList(filterQuery);
   }
 
   @Get()
