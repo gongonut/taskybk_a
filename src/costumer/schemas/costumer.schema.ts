@@ -16,6 +16,9 @@ export class Costumer {
     id: string;
 
     @Prop()
+    email?: string;
+
+    @Prop()
     linkup_1?: string;
 
     @Prop()

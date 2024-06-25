@@ -24,12 +24,14 @@ import { ChatbotModule } from './chatbot/chatbot.module';
 import { CategModule } from './categ/categ.module';
 import { IaResourceModule } from './ia-resource/ia-resource.module';
 import { IoFilesModule } from './io-files/io-files.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGO_URL),
     // InMemoryDBModule.forRoot({}),
+    ScheduleModule.forRoot(),
     MailModule,
     PollsGroupModule,
     StaffModule,

@@ -20,6 +20,9 @@ export class PollResult {
     crm_costum_contactname?: string;
 
     @Prop()
+    crm_costum_contactmail?: string;
+
+    @Prop()
     crm_prod_id?: string[]
 
     @Prop()

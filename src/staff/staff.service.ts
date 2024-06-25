@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Workbook } from 'exceljs';
 import { ChatGateway, DbState } from 'src/chat/chat.gateway';
 import { Payload } from 'src/datatypes';
+import { Cron } from '@nestjs/schedule';
 // import { DbState } from 'src/datatypes';
 
 @Injectable()
@@ -19,10 +20,60 @@ export class StaffService {
     @Inject(ChatGateway) private chatcmd: ChatGateway,
     private jwtAuthServ: JwtService) { }
 
+  @Cron('0 */12 * * *')
+  async handleScheduleCron() {
+    console.log('Inicio reagendar:', Date.now());
+    await this.endStaffAppoint();
+    // console.log('actualizado...');
+    console.log('Fin reagendar:', Date.now())
+  }
+
+  async endStaffAppoint() {
+    const d = new Date();
+    let date = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours() - 2).getTime();
+    // (await this.staffModel.find({'appoint.dateend': {$lt: date}, 'appoint.sche_schedule': {$ne: 'n'}})).forEach(staff => {
+    (await this.staffModel.find({ 'appoint.dateend': { $lt: date } })).forEach(async staff => {
+      let i = 0;
+      while (i < staff.appoint.length) {
+        if (staff.appoint[i].ended === false) {
+          // envía error
+          // await this.chatcmd.handleNotifCMD(DbState.none, 'appoint', staff._id.toString(), user, staff._id.toString().toString(), adata);
+        }
+        if (staff.appoint[i].sche_schedule === 'n' && staff.appoint[i].ended === true) { staff.appoint[i].deleteOne(); break; } else {
+          const dt = new Date(staff.appoint[i].datetime);
+          const dte = new Date(staff.appoint[i].dateend);
+          let dt0 = 0; let dte0 = 0; i++;
+          switch (staff.appoint[i].sche_schedule) {
+            case 'd':
+              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 1).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + 1).getTime();
+              break;
+            case 's':
+              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 7).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + 7).getTime();
+              break;
+            case 'o':
+              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + staff.appoint[i].sche_other).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + staff.appoint[i].sche_other).getTime();
+              break;
+            case 'm':
+              dt0 = new Date(dt.getFullYear(), dt.getMonth() + 1, dt.getDate()).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth() + 1, dte.getDate()).getTime();
+              break;
+          }
+        }
+      }
+
+      // update staff
+      await this.staffModel.findByIdAndUpdate(staff._id, staff, { new: true });
+    })
+
+  }
+
   async create(createStaffDto: CreateStaffDto, user: Payload): Promise<Staff> {
     const createdStaff = new this.staffModel(createStaffDto);
 
-    const { _id, names, lastnames  } = createdStaff;
+    const { _id, names, lastnames } = createdStaff;
     const adata = { names, lastnames }
     await this.chatcmd.handleNotifCMD(DbState.insert, 'staff', _id.toString(), user, _id.toString(), adata);
     return createdStaff.save();
@@ -117,13 +168,13 @@ export class StaffService {
         if (studyLevel != null) {
           options['studyLevel'] = studyLevel;
         }
-        if(rol) {
-          options['rol'] = {$in: rol};
+        if (rol) {
+          options['rol'] = { $in: rol };
         }
-        if(stars) {
+        if (stars) {
           options['stars'] = stars;
         }
-        if (email) {options['email'] = email;}
+        if (email) { options['email'] = email; }
         break;
       case '4': // rol
         options['rol'] = { $in: rol };
@@ -142,8 +193,8 @@ export class StaffService {
   }
 
   async update(id: string, updateStaffDto: UpdateStaffDto, user: Payload) {
-    
-    const { names, lastnames  } = updateStaffDto;
+
+    const { names, lastnames } = updateStaffDto;
     const adata = { names, lastnames }
     await this.chatcmd.handleNotifCMD(DbState.update, 'staff', id, user, id, adata);
 

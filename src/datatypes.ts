@@ -7,7 +7,7 @@
 */
 
 export interface Payload {
-id: string;
-name: string;
- rol: string[];
+    id: string;
+    name: string;
+    rol: string[];
 }

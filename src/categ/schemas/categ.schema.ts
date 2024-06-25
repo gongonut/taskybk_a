@@ -37,11 +37,11 @@ export class ChrOption extends Document {
     @Prop()
     type: string; // NONE, radio, checkbox, select picture, select multi
     @Prop()
-    selectType: string; // NONE, radio, checkbox, select picture, select multi
+    select: boolean; // NONE, radio, checkbox, select picture, select multi
     @Prop({ type: [ChrOptionDataSchema], default: [] })
     selectlist?: ChrOptionData[];
-    @Prop()
-    selected?: string;
+    // @Prop()
+    // selected?: string;
     @Prop()
     source?: string;
 }
@@ -70,22 +70,16 @@ export class Category extends Document {
 
     @Prop()
     _id: string;
-
     @Prop()
     picture?: string;
-
     @Prop()
     name: string;
-
     @Prop()
     description?: string;
-
     @Prop({ type: [CharacteristicsSchema], default: [] })
     characterList?: Characteristics[];
-
     @Prop()
     indexCategory?: string[];
-
     @Prop()
     visible: boolean;
 }
