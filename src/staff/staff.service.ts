@@ -20,7 +20,7 @@ export class StaffService {
     @Inject(ChatGateway) private chatcmd: ChatGateway,
     private jwtAuthServ: JwtService) { }
 
-  @Cron('0 */12 * * *')
+  @Cron('0 */12 * * *') // @Cron('*/2 * * * *')  https://crontab.guru/
   async handleScheduleCron() {
     console.log('Inicio reagendar:', Date.now());
     await this.endStaffAppoint();
@@ -31,43 +31,60 @@ export class StaffService {
   async endStaffAppoint() {
     const d = new Date();
     let date = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours() - 2).getTime();
+    const failAppointList = [];
     // (await this.staffModel.find({'appoint.dateend': {$lt: date}, 'appoint.sche_schedule': {$ne: 'n'}})).forEach(staff => {
     (await this.staffModel.find({ 'appoint.dateend': { $lt: date } })).forEach(async staff => {
+      // console.log('staff:',staff);
+      const appointList = JSON.parse(JSON.stringify(staff.appoint));
       let i = 0;
-      while (i < staff.appoint.length) {
-        if (staff.appoint[i].ended === false) {
-          // envía error
-          // await this.chatcmd.handleNotifCMD(DbState.none, 'appoint', staff._id.toString(), user, staff._id.toString().toString(), adata);
-        }
-        if (staff.appoint[i].sche_schedule === 'n' && staff.appoint[i].ended === true) { staff.appoint[i].deleteOne(); break; } else {
-          const dt = new Date(staff.appoint[i].datetime);
-          const dte = new Date(staff.appoint[i].dateend);
+      while (i < appointList.length) {
+        const appoint = appointList[i];
+        // delete(appoint._id);
+        // console.log('appoint:',appoint);
+        if (!appoint.ended) { failAppointList.push(appoint); }
+        if (appoint.sche_schedule === 'n' && appoint.ended === true) { appointList.splice(i, 1); break; } else {
+          const dt = new Date(appoint.datetime);
+          const dte = new Date(appoint.dateend || 0);
           let dt0 = 0; let dte0 = 0; i++;
-          switch (staff.appoint[i].sche_schedule) {
+          switch (appoint.sche_schedule) {
             case 'd':
-              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 1).getTime();
-              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + 1).getTime();
+              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 1, dt.getHours(), dt.getMinutes()).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + 1, dte.getHours(), dte.getMinutes()).getTime();
               break;
             case 's':
-              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 7).getTime();
-              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + 7).getTime();
+              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 7, dt.getHours(), dt.getMinutes()).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + 7, dte.getHours(), dte.getMinutes()).getTime();
               break;
             case 'o':
-              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + staff.appoint[i].sche_other).getTime();
-              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + staff.appoint[i].sche_other).getTime();
+              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + appoint.sche_other, dt.getHours(), dt.getMinutes()).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + appoint.sche_other, dte.getHours(), dte.getMinutes()).getTime();
               break;
             case 'm':
-              dt0 = new Date(dt.getFullYear(), dt.getMonth() + 1, dt.getDate()).getTime();
-              dte0 = new Date(dte.getFullYear(), dte.getMonth() + 1, dte.getDate()).getTime();
+              dt0 = new Date(dt.getFullYear(), dt.getMonth() + 1, dt.getDate(), dt.getHours(), dt.getMinutes()).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth() + 1, dte.getDate(), dte.getHours(), dte.getMinutes()).getTime();
               break;
           }
+          appoint.datetime = dt0;
+          appoint.dateend = dte0;
         }
       }
 
+      staff.appoint = appointList;
+      // console.log('staff:',staff);
       // update staff
       await this.staffModel.findByIdAndUpdate(staff._id, staff, { new: true });
-    })
+    });
+    // update fail appoint
+    const failListByOwner: { owner: string, data: string[] }[] = [];
+    failAppointList.forEach(failItem => {
+      const data = `${failItem.staff_name} -> ${failItem.pollgrp_model_name} ${new Date(failItem.datetime)} `;
+      const fbo = failListByOwner.find(failListB => failListB.owner === failItem.owner);
+      if (fbo) { fbo.data.push(data) } else { failListByOwner.push({ owner: failItem.owner, data: [data] }) }
+    });
 
+    failListByOwner.forEach(async failListB => {
+      // await this.chatcmd.handleNotifCMD(DbState.update, 'staff', id, user, id, adata);
+    });
   }
 
   async create(createStaffDto: CreateStaffDto, user: Payload): Promise<Staff> {

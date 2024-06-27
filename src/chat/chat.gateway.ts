@@ -1,4 +1,5 @@
 // import { Inject } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import {
   // OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit,
   SubscribeMessage,
@@ -42,6 +43,16 @@ export interface CollectionNotification {
   OriginalsocketId: string;
 }
 
+interface HandleNotifCMD {
+  dbState: DbState,
+  collection: string,
+  field_id: string,
+  userData: Payload,
+  usert_id: string, // Staff o grupo de staff a quienes se dirige la accion
+  data: any,
+  date: number;
+}
+
 // @WebSocketGateway(Number(process.env.CHAT_PORT), { cors: { origin: '*' } })
 @WebSocketGateway({ cors: { origin: '*', } })
 export class ChatGateway {
@@ -50,23 +61,63 @@ export class ChatGateway {
 
   @WebSocketServer() server: Server;
 
+  // ............................ MEMORY DATA BASE NOT SEND MESSAGE ...............................
+
+  private handleNotifCMDList: Array<HandleNotifCMD> = [];
+
+  private getAllUsertId(): Array<string> {
+    const result: string[] = [];
+    this.handleNotifCMDList.forEach((notif) => result.push(notif.usert_id));
+    return result;
+  }
+
+  private getAllNotifList(): Array<HandleNotifCMD> { return this.handleNotifCMDList; }
+
+  private getNotifListByUsertId(staff__id: string): Array<HandleNotifCMD> {
+    const result: Array<HandleNotifCMD> = [];
+    for (let i = 0; i < this.handleNotifCMDList.length; i++) {
+      if (this.handleNotifCMDList[i].usert_id === staff__id) { result.push(this.handleNotifCMDList[i]) }
+    }
+    return result;
+  }
+
+  private insertNotifList(updateCard: any) { this.handleNotifCMDList.push(updateCard); }
+
+  private deleteNotifListByIdt(staff__id: string) {
+    while (true) {
+      const cardIndex = this.handleNotifCMDList.findIndex((c) => c.usert_id === staff__id);
+      if (cardIndex >= 0) {
+        this.notification.splice(cardIndex, 1);
+      } else { break; }
+    }
+
+  }
+
+  private depureNotifByDataDtb() {
+    const dt = new Date();
+    const date = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + - process.env.DAYS_TO_KEEP_MSGS).getTime();
+    for (let i = 0; i < this.handleNotifCMDList.length; i++) {
+      if (this.handleNotifCMDList[i].date > date) { this.handleNotifCMDList.splice(i, 1); i--; }
+    }
+  }
+
   // ................... MEMORY DATA BASE MEMORY DATA BASE MEMORY DATA BASE .....................
 
   private notification: Array<NotifPayLoad> = [];
 
-  getAllSocketId(): Array<string> {
+  private getAllSocketId(): Array<string> {
     const result: string[] = [];
     this.notification.forEach((notif) => result.push(notif.socket_id));
     return result;
   }
 
-  getAll(): Array<NotifPayLoad> { return this.notification; }
+  private getAll(): Array<NotifPayLoad> { return this.notification; }
 
-  getById(staff__id: string): NotifPayLoad {
+  private getById(staff__id: string): NotifPayLoad {
     return this.notification.find((notif) => notif.staff__id === staff__id);
   }
 
-  upSert(idsocket_id: string, updateCard: any) {
+  private upSert(idsocket_id: string, updateCard: any) {
     const indexToUpdate = this.notification.findIndex((notif) => notif.socket_id === idsocket_id);
     if (indexToUpdate >= 0) {
       this.notification[indexToUpdate] = {
@@ -79,6 +130,7 @@ export class ChatGateway {
     }
   }
 
+  /*
   create(notif: any) {
     notif.id = Date.now();
     notif.validDate = new Date().toLocaleDateString('ES');
@@ -95,8 +147,9 @@ export class ChatGateway {
       };
     }
   }
+    */
 
-  delete(socket_id: string) {
+  private delete(socket_id: string) {
     const cardIndex = this.notification.findIndex((c) => c.socket_id === socket_id);
     if (cardIndex >= 0) {
       this.notification.splice(cardIndex, 1);
@@ -105,19 +158,41 @@ export class ChatGateway {
 
   // ...........................................................................................
 
+  // https://crontab.guru/
+  @Cron('0 0 17 * * *') // At 17:00:00 every day
+  async handleMessageCron() {
+    console.log('Inicio depurar mensajes:', Date.now());
+    await this.depureNotifByDataDtb();
+    // console.log('actualizado...');
+    console.log('Fin depurar mensajes:', Date.now())
+  }
+
+  private async resendData(staff__id: string) {
+    const data2Send = this.getNotifListByUsertId(staff__id);
+    if (data2Send.length > 0) {
+      for (let i = 0; i < data2Send.length; i++) {
+        await this.handleNotifCMD(data2Send[i].dbState, data2Send[i].collection, data2Send[i].field_id, data2Send[i].userData, data2Send[i].usert_id, data2Send[i].data);
+      }
+      this.deleteNotifListByIdt(staff__id);
+    }
+  }
+
   handleConnection(client: any) {
-    this.authChatServices.getUserFromSocket(client).then(userData => {
+    this.authChatServices.getUserFromSocket(client).then(async userData => {
       const updateCard: NotifPayLoad = {
         socket_id: client.id,
         staff__id: userData?.id || '',
         rol: userData?.rol || [],
       }
       this.upSert(client.id, updateCard);
+      // Resend data
+      if (userData && userData.id) { this.resendData(userData.id); }
+
     });
   }
 
   @SubscribeMessage('credential')
-  handleCredential(client: Socket, data: any) {
+  async handleCredential(client: Socket, data: any) {
     if (!data.staff__id) return;
     const updateCard: NotifPayLoad = {
       staff__id: data.staff__id,
@@ -125,6 +200,8 @@ export class ChatGateway {
       rol: data.rol.split(',')
     }
     this.upSert(client.id, updateCard);
+    // Resend data
+    if (data && data.staff__id) { this.resendData(data.staff__id); }
   }
 
   @SubscribeMessage('command')
@@ -186,6 +263,8 @@ export class ChatGateway {
       const tgClient = await this.getById(t);
       if (tgClient) {
         this.server.to(tgClient.socket_id).emit('dtb-notification', collectPayLoad);
+      } else {
+        this.insertNotifList({ dbState, collection, field_id, userData, usert_id, data, date: Date.now() });
       }
 
     })
