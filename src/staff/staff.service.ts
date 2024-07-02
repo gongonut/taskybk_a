@@ -20,7 +20,7 @@ export class StaffService {
     @Inject(ChatGateway) private chatcmd: ChatGateway,
     private jwtAuthServ: JwtService) { }
 
-  @Cron('*/5 * * * *') // @Cron('1 1,13 * * *')  @Cron('*/2 * * * *') https://crontab.guru/
+  @Cron('1 1,13 * * *')// @Cron('1 1,13 * * *')  @Cron('*/2 * * * *') https://crontab.guru/
   async handleScheduleCron() {
     console.log('Inicio reagendar:', Date.now());
     await this.endStaffAppoint();
@@ -41,7 +41,7 @@ export class StaffService {
         const appoint = appointList[i];
         if (!appoint.ended) { failAppointList.push(appoint); }
         if (appoint.sche_schedule === 'n' && appoint.ended === true) {
-          appointList.splice(i, 1); break; 
+          appointList.splice(i, 1); break;
         } else if (appoint.ended < td.getTime()) {
           const dt = new Date(appoint.datetime);
           const dte = new Date(appoint.dateend || 0);
