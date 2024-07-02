@@ -7,13 +7,15 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { ChatModule } from 'src/chat/chat.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forFeature([{ name: Staff.name, schema: StaffSchema }]),
     JwtModule.register({global: true, secret: process.env.JWT_SEED, signOptions: { expiresIn: '2h' }, }),
-    ChatModule
+    ChatModule,
+    MailModule
   ],
   controllers: [StaffController],
   providers: [StaffService, JwtStrategy],

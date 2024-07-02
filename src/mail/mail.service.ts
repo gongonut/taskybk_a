@@ -114,6 +114,15 @@ export class MailService {
     }
   }
 
+  async otherNotification(notifMailList: string, htmldata: string, subject: string) {
+    const maillist = notifMailList.split(';').join(',');
+    return await this.mails.sendMail({
+      to: maillist,
+      subject: subject,
+      html: htmldata,
+    })
+  }
+
   /*
 
   create(createEmailDto: CreateEmailDto) {

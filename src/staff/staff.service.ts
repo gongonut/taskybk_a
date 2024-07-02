@@ -10,6 +10,7 @@ import { Workbook } from 'exceljs';
 import { ChatGateway, DbState } from 'src/chat/chat.gateway';
 import { Payload } from 'src/datatypes';
 import { Cron } from '@nestjs/schedule';
+import { MailService } from 'src/mail/mail.service';
 // import { DbState } from 'src/datatypes';
 
 @Injectable()
@@ -18,23 +19,80 @@ export class StaffService {
   constructor(
     @InjectModel(Staff.name) private staffModel: Model<Staff>,
     @Inject(ChatGateway) private chatcmd: ChatGateway,
+    @Inject(MailService) private readonly emails: MailService,
     private jwtAuthServ: JwtService) { }
 
-  @Cron('1 1,13 * * *')// @Cron('1 1,13 * * *')  @Cron('*/2 * * * *') https://crontab.guru/
+  @Cron('1 1,13 * * *') // @Cron('1 1,13 * * *')  @Cron('*/2 * * * *') https://crontab.guru/
   async handleScheduleCron() {
     console.log('Inicio reagendar:', Date.now());
-    await this.endStaffAppoint();
+    await this.endStaffAppoint(true);
     // console.log('actualizado...');
     console.log('Fin reagendar:', Date.now())
   }
 
-  async endStaffAppoint() {
+  @Cron('*/30 * * * *') // @Cron('*/2 * * * *')
+  async handleScheduleUndoneCron() {
+    console.log('Inicio agenda fallida:', Date.now());
+    await this.endStaffAppoint(false);
+    // console.log('actualizado...');
+    console.log('Fin agenda fallida:', Date.now())
+  }
+
+  async endStaffAppoint(appointRedo: boolean) {
     const td = new Date();
-    const dateAppoint = new Date(td.getFullYear(), td.getMonth(), td.getDate(), td.getHours() - 2).getTime();
     const failAppointList = [];
+    let result: Staff[];
     // (await this.staffModel.find({'appoint.dateend': {$lt: date}, 'appoint.sche_schedule': {$ne: 'n'}})).forEach(staff => {
+    if (appointRedo) {
+      const dateAppoint = new Date(td.getFullYear(), td.getMonth(), td.getDate(), td.getHours() - 2).getTime();
+      result = await this.staffModel.find({ 'appoint.dateend': { $lt: dateAppoint }, 'appoint.ended': true }); 
+    } else {
+      const dateAppoint = new Date(td.getFullYear(), td.getMonth(), td.getDate(), td.getHours()).getTime();
+      result = await this.staffModel.find({ 'appoint.dateend': { $lt: dateAppoint }, 'appoint.ended': false }); 
+    }
+    result.forEach(async staff => {
+      const appointList = JSON.parse(JSON.stringify(staff.appoint));
+      let i = 0;
+      while (i < appointList.length) {
+        const appoint = appointList[i];
+        if (!appoint.ended) { failAppointList.push(appoint); }
+        if (appoint.sche_schedule === 'n' && appoint.ended === true) {
+          appointList.splice(i, 1); break;
+        } else if (appoint.ended < td.getTime()) {
+          const dt = new Date(appoint.datetime);
+          const dte = new Date(appoint.dateend || 0);
+          let dt0 = dt.getTime(); let dte0 = dte.getTime(); i++;
+          switch (appoint.sche_schedule) {
+            case 'd':
+              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 1, dt.getHours(), dt.getMinutes()).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + 1, dte.getHours(), dte.getMinutes()).getTime();
+              break;
+            case 's':
+              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 7, dt.getHours(), dt.getMinutes()).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + 7, dte.getHours(), dte.getMinutes()).getTime();
+              break;
+            case 'o':
+              dt0 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + appoint.sche_other, dt.getHours(), dt.getMinutes()).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth(), dte.getDate() + appoint.sche_other, dte.getHours(), dte.getMinutes()).getTime();
+              break;
+            case 'm':
+              dt0 = new Date(dt.getFullYear(), dt.getMonth() + 1, dt.getDate(), dt.getHours(), dt.getMinutes()).getTime();
+              dte0 = new Date(dte.getFullYear(), dte.getMonth() + 1, dte.getDate(), dte.getHours(), dte.getMinutes()).getTime();
+              break;
+          }
+          appoint.datetime = dt0;
+          appoint.dateend = dte0;
+          appoint.ended = false;
+        }
+      }
+
+      staff.appoint = appointList;
+      // const user = { id: staff._id, name: 'MESSAGE', rol: ['A'] };
+      await this.staffModel.findByIdAndUpdate(staff._id, staff, { new: true });
+    });
+
+    /*
     (await this.staffModel.find({ 'appoint.dateend': { $lt: dateAppoint } })).forEach(async staff => {
-      // console.log('staff:',staff);
       const appointList = JSON.parse(JSON.stringify(staff.appoint));
       let i = 0;
       while (i < appointList.length) {
@@ -72,22 +130,27 @@ export class StaffService {
 
       staff.appoint = appointList;
       const user = { id: staff._id, name: 'MESSAGE', rol: ['A'] };
-      // await this.chatcmd.handleNotifCMD(DbState.update, 'message', staff._id, user, failListB.owner, adata);
-
       await this.staffModel.findByIdAndUpdate(staff._id, staff, { new: true });
     });
+    */
     // update fail appoint
-    const failListByOwner: { owner: string, data: string[] }[] = [];
+    const failListByOwner: { owner: string, notifMailList: string, data: string[] }[] = [];
     failAppointList.forEach(failItem => {
       const data = `${failItem.staff_name} -> ${failItem.pollgrp_model_name} ${new Date(failItem.datetime).toLocaleString()} `;
       const fbo = failListByOwner.find(failListB => failListB.owner === failItem.owner);
-      if (fbo) { fbo.data.push(data) } else { failListByOwner.push({ owner: failItem.owner, data: [data] }) }
+      const notifMailList = failItem.notifMailList.join('\n').replaceAll('\n',';');
+      if (fbo) { fbo.data.push(data) } else { failListByOwner.push({ owner: failItem.owner, notifMailList, data: [data] }) }
     });
 
     failListByOwner.forEach(async failListB => {
       const user = { id: failListB.owner, name: 'MESSAGE', rol: ['A'] };
       const adata = `<strong>Agenda no cumplida:</strong><hr><ul><li>${failListB.data.join('</li><li>')}</ul>`
       await this.chatcmd.handleNotifCMD(DbState.update, 'message', failListB.owner, user, failListB.owner, adata, true);
+      // correo
+      if (failListB.notifMailList.length > 0) {
+        await this.emails.otherNotification(failListB.notifMailList, adata, 'Agenda no efectuada')
+      }
+      
     });
   }
 

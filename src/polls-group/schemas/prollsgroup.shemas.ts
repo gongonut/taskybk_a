@@ -126,6 +126,7 @@ export class PollGroups {
     
     @Prop()
     exported: boolean;
+    
 }
 
 export const PollsGrpSchema = SchemaFactory.createForClass(PollGroups);
