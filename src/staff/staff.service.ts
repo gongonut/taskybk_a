@@ -20,7 +20,7 @@ export class StaffService {
     @Inject(ChatGateway) private chatcmd: ChatGateway,
     private jwtAuthServ: JwtService) { }
 
-    @Cron('1 1,13 * * *') // @Cron('1 1,13 * * *') // @Cron('0 */12 * * *') // @Cron('*/2 * * * *') https://crontab.guru/
+  @Cron('*/5 * * * *') // @Cron('1 1,13 * * *')  @Cron('*/2 * * * *') https://crontab.guru/
   async handleScheduleCron() {
     console.log('Inicio reagendar:', Date.now());
     await this.endStaffAppoint();
@@ -29,18 +29,20 @@ export class StaffService {
   }
 
   async endStaffAppoint() {
-    const d = new Date();
-    let date = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours() - 2).getTime();
+    const td = new Date();
+    const dateAppoint = new Date(td.getFullYear(), td.getMonth(), td.getDate(), td.getHours() - 2).getTime();
     const failAppointList = [];
     // (await this.staffModel.find({'appoint.dateend': {$lt: date}, 'appoint.sche_schedule': {$ne: 'n'}})).forEach(staff => {
-    (await this.staffModel.find({ 'appoint.dateend': { $lt: date } })).forEach(async staff => {
+    (await this.staffModel.find({ 'appoint.dateend': { $lt: dateAppoint } })).forEach(async staff => {
       // console.log('staff:',staff);
       const appointList = JSON.parse(JSON.stringify(staff.appoint));
       let i = 0;
       while (i < appointList.length) {
         const appoint = appointList[i];
         if (!appoint.ended) { failAppointList.push(appoint); }
-        if (appoint.sche_schedule === 'n' && appoint.ended === true) { appointList.splice(i, 1); break; } else {
+        if (appoint.sche_schedule === 'n' && appoint.ended === true) {
+          appointList.splice(i, 1); break; 
+        } else if (appoint.ended < td.getTime()) {
           const dt = new Date(appoint.datetime);
           const dte = new Date(appoint.dateend || 0);
           let dt0 = dt.getTime(); let dte0 = dte.getTime(); i++;
@@ -71,7 +73,7 @@ export class StaffService {
       staff.appoint = appointList;
       const user = { id: staff._id, name: 'MESSAGE', rol: ['A'] };
       // await this.chatcmd.handleNotifCMD(DbState.update, 'message', staff._id, user, failListB.owner, adata);
-      
+
       await this.staffModel.findByIdAndUpdate(staff._id, staff, { new: true });
     });
     // update fail appoint
@@ -85,7 +87,7 @@ export class StaffService {
     failListByOwner.forEach(async failListB => {
       const user = { id: failListB.owner, name: 'MESSAGE', rol: ['A'] };
       const adata = `<strong>Agenda no cumplida:</strong><hr><ul><li>${failListB.data.join('</li><li>')}</ul>`
-      await this.chatcmd.handleNotifCMD(DbState.update, 'message', failListB.owner, user, failListB.owner, adata);
+      await this.chatcmd.handleNotifCMD(DbState.update, 'message', failListB.owner, user, failListB.owner, adata, true);
     });
   }
 
@@ -94,7 +96,7 @@ export class StaffService {
 
     const { _id, names, lastnames } = createdStaff;
     const adata = { names, lastnames }
-    await this.chatcmd.handleNotifCMD(DbState.insert, 'staff', _id.toString(), user, _id.toString(), adata);
+    await this.chatcmd.handleNotifCMD(DbState.insert, 'staff', _id.toString(), user, _id.toString(), adata, false);
     return createdStaff.save();
   }
 
@@ -216,7 +218,7 @@ export class StaffService {
     let { names, lastnames } = updateStaffDto;
     if (lastnames === undefined) lastnames = '';
     const adata = { names, lastnames }
-    await this.chatcmd.handleNotifCMD(DbState.update, 'staff', id, user, id, adata);
+    await this.chatcmd.handleNotifCMD(DbState.update, 'staff', id, user, id, adata, false);
 
     return await this.staffModel.findByIdAndUpdate(id, updateStaffDto, { new: true });
   }
@@ -225,7 +227,7 @@ export class StaffService {
 
     // const { names, lastnames  } = updateStaffDto;
     const adata = { id }
-    await this.chatcmd.handleNotifCMD(DbState.delete, 'staff', id, user, id, adata);
+    await this.chatcmd.handleNotifCMD(DbState.delete, 'staff', id, user, id, adata, false);
 
     return await this.staffModel.findByIdAndRemove(id);
   }

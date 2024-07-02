@@ -22,7 +22,7 @@ export class PollresultService {
     const newdPlresult = await new this.pollResultModel(createPollresultDto);
     const { _id, staff__id, pollGrp_id, status } = newdPlresult;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD(DbState.insert, 'pollresult', _id.toString(), user, staff__id, adata);
+    await this.chatcmd.handleNotifCMD(DbState.insert, 'pollresult', _id.toString(), user, staff__id, adata, false);
     return newdPlresult.save();
   }
 
@@ -52,7 +52,7 @@ export class PollresultService {
   async update(id: string, updatePollresultDto: UpdatePollresultDto, user: any) {
     const { staff__id, pollGrp_id, status } = updatePollresultDto;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user.id, staff__id, adata);
+    await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user.id, staff__id, adata, false);
     if (updatePollresultDto.ended) {
 
     }
@@ -66,11 +66,11 @@ export class PollresultService {
 
     if (fieldName === 'status') {
       const adata = { status, pollGrp_id }
-      await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user, stafft_id, adata);
+      await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user, stafft_id, adata, false);
     } else {
       const msg = chats[chats.length - 1];
       const adata = { status, pollGrp_id, pollGrpName, staff_name, msg }
-      await this.chatcmd.handleNotifCMD(DbState.update, 'chat', id, user, stafft_id, adata);
+      await this.chatcmd.handleNotifCMD(DbState.update, 'chat', id, user, stafft_id, adata, false);
     }
     return await this.pollResultModel.findByIdAndUpdate(id, { $set: { date_ini, chats, status } });
   }
@@ -84,7 +84,7 @@ export class PollresultService {
     const newdPlresult = await this.pollResultModel.findById(id);
     const { _id, staff__id, pollGrp_id, status } = newdPlresult;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD(DbState.delete, 'pollresult', _id.toString(), user, staff__id, adata);
+    await this.chatcmd.handleNotifCMD(DbState.delete, 'pollresult', _id.toString(), user, staff__id, adata, false);
     return await this.pollResultModel.findByIdAndRemove(id);
   }
 

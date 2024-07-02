@@ -9,6 +9,10 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AuthChatServices } from 'src/chat/jwt.authChatservices';
 import { Payload } from 'src/datatypes';
+import { Chat } from './schemas/chat.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 
 export enum DbState {
   insert = 'insert',
@@ -51,6 +55,13 @@ interface HandleNotifCMD {
   usert_id: string, // Staff o grupo de staff a quienes se dirige la accion
   data: any,
   date: number;
+  save2DTB: boolean
+}
+
+@Injectable()
+export class CategService {
+
+  constructor(@InjectModel(Chat.name) private categModel: Model<Chat>) { }
 }
 
 // @WebSocketGateway(Number(process.env.CHAT_PORT), { cors: { origin: '*' } })
@@ -87,7 +98,7 @@ export class ChatGateway {
     while (true) {
       const cardIndex = this.handleNotifCMDList.findIndex((c) => c.usert_id === staff__id);
       if (cardIndex >= 0) {
-        this.notification.splice(cardIndex, 1);
+        this.handleNotifCMDList.splice(cardIndex, 1);
       } else { break; }
     }
 
@@ -128,6 +139,10 @@ export class ChatGateway {
       /// updateCard.id = Date.now();
       this.notification.push(updateCard);
     }
+  }
+
+  private getDefaId(): NotifPayLoad {
+    return { staff__id: 'SERVER', rol: ['N'], socket_id: 'SERVER' }
   }
 
   /*
@@ -171,7 +186,7 @@ export class ChatGateway {
     const data2Send = this.getNotifListByUsertId(staff__id);
     if (data2Send.length > 0) {
       for (let i = 0; i < data2Send.length; i++) {
-        await this.handleNotifCMD(data2Send[i].dbState, data2Send[i].collection, data2Send[i].field_id, data2Send[i].userData, data2Send[i].usert_id, data2Send[i].data);
+        await this.handleNotifCMD(data2Send[i].dbState, data2Send[i].collection, data2Send[i].field_id, data2Send[i].userData, data2Send[i].usert_id, data2Send[i].data, data2Send[i].save2DTB);
       }
       this.deleteNotifListByIdt(staff__id);
     }
@@ -210,27 +225,9 @@ export class ChatGateway {
     await this.handleNotifCMD(DbState.none, data.cmd, '',
       pl,
       data.usert_id,
-      data.data)
-    /*
-    switch (data.cmd) {
-      case 'geoloc':
-      case 'ansgeoloc':
-        await this.handleNotifCMD(DbState.none, data.cmd, '',
-          pl,
-          data.usert_id,
-          data.content)
-        break;
-    }
-    */
-
-
-    /*
-    const sourceClient = await this.getById(data.user_id);
-    if (!sourceClient) return;
-    const targetClient = await this.getById(data.usert_id);
-    if (!targetClient) return;
-    this.server.to(targetClient.socket_id).emit('command2', data);
-    */
+      data.data,
+      true
+    )
   }
 
   handleDisconnect(client: any) {
@@ -245,10 +242,11 @@ export class ChatGateway {
     field_id: string,
     userData: Payload,
     usert_id: string, // Staff o grupo de staff a quienes se dirige la accion
-    data: any
+    data: any,
+    save2DTB: boolean = false
   ) {
-    const actualClient = await this.getById(userData.id);
-    if (!actualClient) return;
+    let actualClient = await this.getById(userData.id);
+    if (!actualClient) actualClient = this.getDefaId();
     const collectPayLoad: CollectionNotification = {
       dbState, collection, field_id, user_id: userData.id, usert_id,
       date: Date.now(),
@@ -263,8 +261,8 @@ export class ChatGateway {
       const tgClient = await this.getById(t);
       if (tgClient) {
         this.server.to(tgClient.socket_id).emit('dtb-notification', collectPayLoad);
-      } else {
-        this.insertNotifList({ dbState, collection, field_id, userData, usert_id, data, date: Date.now() });
+      } else if (save2DTB) {
+        this.insertNotifList({ dbState, collection, field_id, userData, usert_id, data, date: Date.now(), save2DTB });
       }
 
     })
@@ -311,8 +309,8 @@ export class ChatGateway {
     usert_id: string, // Staff a quien se dirige la accion, if _broadcast_ a todos
     data: any
   ) {
-    const actualClient = await this.getById(userData.id);
-    if (!actualClient) return;
+    let actualClient = await this.getById(userData.id);
+    if (!actualClient) actualClient = this.getDefaId();
     // Get list of subscriber clients
 
     const soketList = await this.getAll();

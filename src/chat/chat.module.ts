@@ -4,6 +4,8 @@ import { Module } from '@nestjs/common';
 import { ChatGateway } from './chat.gateway';
 import { ConfigModule } from '@nestjs/config';
 import { AuthChatServices } from './jwt.authChatservices';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Chat, ChatSchema } from './schemas/chat.schema';
 // import { IAService } from './chatbot.service';
 // import { MongooseModule } from '@nestjs/mongoose';
 // import { Chat, ChatSchema } from '../chatbot/schemas/chat.schema';
@@ -16,7 +18,10 @@ import { AuthChatServices } from './jwt.authChatservices';
 
 @Module({
   imports: [
-    ConfigModule.forRoot()
+    ConfigModule.forRoot(),
+    MongooseModule.forFeature([
+      { name: Chat.name, schema: ChatSchema }
+    ])
   ],
   providers: [ChatGateway, AuthChatServices],
   exports: [ChatGateway]
