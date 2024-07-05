@@ -48,6 +48,8 @@ export class Appoint extends Document {
     sche_other?: number;
     @Prop()
     notifMailList?: string[]; // lista de correos eletrónicos para notificar?: string;
+    @Prop()
+    reported: boolean; // reportado en la búsqueda
 }
 export const AppointSchema = SchemaFactory.createForClass(Appoint);
 

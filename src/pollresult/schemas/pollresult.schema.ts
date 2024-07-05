@@ -7,6 +7,9 @@ export type PollResultDocument = HydratedDocument<PollResult>;
 @Schema()
 export class PollResult {
 
+    @Prop()
+    allowDelete: boolean; // permite o no que se borre el formulario una vez creado
+
     @Prop({ type: [Object] })
     chats: any[];
     

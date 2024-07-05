@@ -11,6 +11,9 @@ export class PollGroups {
     active?: boolean;
 
     @Prop()
+    allowDelete: boolean; // permite o no que se borre el formulario una vez creado
+
+    @Prop()
     children: object[];
 
     @Prop()

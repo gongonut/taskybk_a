@@ -7,6 +7,10 @@ export class CreatePollsGroupDto {
     active?: boolean;
 
     @IsNotEmpty()
+    @IsBoolean()
+    allowDelete: boolean; // permite o no que se borre el formulario una vez creado
+
+    @IsNotEmpty()
     children: object[];
 
     @IsOptional()

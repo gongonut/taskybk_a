@@ -2,6 +2,9 @@ import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-val
 
 export class CreatePollresultDto {
     // sent: boolean;
+    @IsNotEmpty()
+    @IsBoolean()
+    allowDelete: boolean; // permite o no que se borre el formulario una vez creado
 
     @IsOptional()
     @IsString()

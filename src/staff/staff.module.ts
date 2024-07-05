@@ -13,6 +13,7 @@ import { MailModule } from 'src/mail/mail.module';
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forFeature([{ name: Staff.name, schema: StaffSchema }]),
+    // MongooseModule.forFeature([{ name: Appoint.name, schema: AppointSchema }]),
     JwtModule.register({global: true, secret: process.env.JWT_SEED, signOptions: { expiresIn: '2h' }, }),
     ChatModule,
     MailModule

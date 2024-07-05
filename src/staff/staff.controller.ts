@@ -66,6 +66,16 @@ export class StaffController {
     return this.staffService.update(id, updateStaffDto, user);
   }
 
+  /*
+  @Roles('A')
+  @UseGuards(RolesGuard)
+  @Put('upsertappoint/:stfid')
+  upsertAppoint(@Param('stfid') stfid: string, @Body() updateStaffDto: UpdateStaffDto, @User() user: any) {
+    return this.staffService.upsertAppoint(stfid, updateStaffDto, user);
+  }
+    */
+  
+
   @Roles('F')
   @UseGuards(RolesGuard)
   @Delete(':id')
