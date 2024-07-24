@@ -32,7 +32,7 @@ export class StaffService {
     console.log('Fin reagendar:', Date().toLocaleString())
   }
 
-  @Cron('*/30 * * * *') // @Cron('*/30 * * * *') @Cron('*/2 * * * *')
+  @Cron('*/30 * * * *') // @Cron('*/30 * * * *')
   async handleScheduleUndoneCron() {
     console.log('Inicio agenda fallida:', Date().toLocaleString());
     await this.endStaffAppoint();
@@ -55,9 +55,9 @@ export class StaffService {
       let i = 0;
       while (i < staff.appoint.length) {
         const appoint = staff.appoint[i];
-        if (appoint.ended && appoint.sche_schedule === 'n') {
+        if (appoint.ended === true && appoint.sche_schedule === 'n') {
           staff.appoint.splice(i, 1);
-        } else if (appoint.dateend < dateAppoint && appoint.ended === false) {
+        } else if (appoint.dateend < dateAppoint && appoint.ended === false && appoint.reported === false) {
           failAppointList.push(appoint);
           appoint.reported = true;
           i++;
