@@ -104,6 +104,11 @@ export class PollResult {
     @Prop()
     status: number; // 0: Ninguno, 1: Seleccionado, 2: En proceso, 3: Finalizado 4:Aprobado 5:pagado
 
+    /*
+    @Prop()
+    titleAsHeader: boolean; // usar label como encabezado de columna
+    */
+
     @Prop({ type: Object })
     values?: { [index: string]: any };
 

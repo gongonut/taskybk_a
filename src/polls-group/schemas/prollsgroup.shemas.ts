@@ -121,6 +121,11 @@ export class PollGroups {
     @Prop()
     taskerNameList?: string[]; // Los Ids del staff
 
+    /*
+    @Prop()
+    titleAsHeader: boolean; // usar label como encabezado de columna
+    */
+
     @Prop()
     total?: number; // Total de encuestas requeridas
 

@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { isBoolean, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreatePollresultDto {
     // sent: boolean;
@@ -116,6 +116,12 @@ export class CreatePollresultDto {
     @IsNotEmpty()
     @IsNumber()
     status: number; // 0: Ninguno, 1: Seleccionado, 2: En proceso, 3: Finalizado 4:Aprobado 5:pagado
+
+    /*
+    @IsNotEmpty()
+    @IsBoolean()
+    titleAsHeader: boolean; // usar label como encabezado de columna
+    */
 
     @IsOptional()
     values?: any;

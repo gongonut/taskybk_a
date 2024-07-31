@@ -144,6 +144,12 @@ export class CreatePollsGroupDto {
     @IsOptional()
     taskerNameList: string[]; // Los Ids del staff
 
+    /*
+    @IsNotEmpty()
+    @IsBoolean()
+    titleAsHeader: boolean; // usar label como encabezado de columna
+    */
+
     @IsOptional()
     @IsNumber()
     total?: number; // Total de encuestas requeridas
