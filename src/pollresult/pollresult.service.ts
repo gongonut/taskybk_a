@@ -185,12 +185,12 @@ export class PollresultService {
     const result = [];
     // const resultM = {};
     let headResult = {
-      _id: 'text',
-      date_ini: 'datetime-local',
-      geoLocStart: 'geolocation',
-      date_end: 'datetime-local',
-      geoLocEnd: 'geolocation',
-      tasker_name: 'text'
+      _id: {type: 'text', label: 'Id'},
+      date_ini: {type: 'datetime-local', label: 'Fecha inicial'},
+      geoLocStart: {type: 'geolocation', label: 'Localización inicial'},
+      date_end: {type: 'datetime-local', label: 'Fecha Final'},
+      geoLocEnd: {type: 'geolocation', label: 'Localización final'},
+      tasker_name: {type: 'text', label: 'Tasker'},
     };
     // let varType = {};
     // let total = 0;
