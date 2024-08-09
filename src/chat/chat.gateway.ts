@@ -8,12 +8,14 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthChatServices } from 'src/chat/jwt.authChatservices';
-import { Payload } from 'src/datatypes';
+import { DbState, Payload } from 'src/datatypes';
 import { Chat } from './schemas/chat.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { CreateChatDto } from './dto/create-chat.dto';
 
+/*
 export enum DbState {
   insert = 'insert',
   update = 'update',
@@ -21,6 +23,7 @@ export enum DbState {
   delete = 'delete',
   none = 'none'
 }
+  */
 
 export type NotifPayLoad = {
   staff__id?: string;
@@ -37,7 +40,7 @@ type CommandData = {
 
 export interface CollectionNotification {
   dbState: DbState;
-  collection?: string; // PollGroups, PollResult, ...
+  mycollection?: string; // PollGroups, PollResult, ...
   field_id?: string; /// _id de el elemento en la colección
   // fieldId?: string; /// id de el elemento en la colección
   user_id?: string; // _id del origen del cambio
@@ -47,6 +50,7 @@ export interface CollectionNotification {
   OriginalsocketId: string;
 }
 
+/*
 interface HandleNotifCMD {
   dbState: DbState,
   collection: string,
@@ -57,22 +61,47 @@ interface HandleNotifCMD {
   date: number;
   save2DTB: boolean
 }
+  */
 
 @Injectable()
-export class CategService {
+export class ChatService {
+  constructor(@InjectModel(Chat.name) private chatModel: Model<Chat>) { }
 
-  constructor(@InjectModel(Chat.name) private categModel: Model<Chat>) { }
+  async create(createChatDto: CreateChatDto): Promise<Chat> {
+    const createdcateg = await new this.chatModel(createChatDto);
+    return await createdcateg.save();
+  }
+
+  async getNotifListByUsertId(staff__id: string): Promise<Chat[]> {
+    return await this.chatModel.find({ usert_id: staff__id }).exec();
+  }
+
+  async deleteNotifListByIdt(staff__id: string) {
+    await this.chatModel.deleteMany({usert_id: staff__id});
+  }
+
+  depureNotifByDataDtb() {
+    const dt = new Date();
+    const adate = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + - process.env.DAYS_TO_KEEP_MSGS).getTime();
+    this.chatModel.deleteMany({date : { $lt: adate }});
+    
+  }
+
 }
 
 // @WebSocketGateway(Number(process.env.CHAT_PORT), { cors: { origin: '*' } })
 @WebSocketGateway({ cors: { origin: '*', } })
 export class ChatGateway {
 
-  constructor(private readonly authChatServices: AuthChatServices) { }
+  constructor(
+    private readonly authChatServices: AuthChatServices,
+    @Inject(ChatService) private readonly chatData: ChatService,
+  ) { }
 
   @WebSocketServer() server: Server;
 
-  // ............................ MEMORY DATA BASE NOT SEND MESSAGE ...............................
+  /*
+  // ............................ MEMORY DATA BASE NOT SENDED MESSAGE ...............................
 
   private handleNotifCMDList: Array<HandleNotifCMD> = [];
 
@@ -111,6 +140,7 @@ export class ChatGateway {
       if (this.handleNotifCMDList[i].date > date) { this.handleNotifCMDList.splice(i, 1); i--; }
     }
   }
+    */
 
   // ................... MEMORY DATA BASE MEMORY DATA BASE MEMORY DATA BASE .....................
 
@@ -177,18 +207,20 @@ export class ChatGateway {
   @Cron('0 0 17 * * *') // At 17:00:00 every day
   async handleMessageCron() {
     console.log('Inicio depurar mensajes:', Date.now());
-    await this.depureNotifByDataDtb();
+    await this.chatData.depureNotifByDataDtb();
     // console.log('actualizado...');
     console.log('Fin depurar mensajes:', Date.now())
   }
 
   private async resendData(staff__id: string) {
-    const data2Send = this.getNotifListByUsertId(staff__id);
-    if (data2Send.length > 0) {
+    // const data2Send = this.getNotifListByUsertId(staff__id);
+    const data2Send = await this.chatData.getNotifListByUsertId(staff__id);
+    if (data2Send && data2Send.length > 0) {
       for (let i = 0; i < data2Send.length; i++) {
-        await this.handleNotifCMD(data2Send[i].dbState, data2Send[i].collection, data2Send[i].field_id, data2Send[i].userData, data2Send[i].usert_id, data2Send[i].data, data2Send[i].save2DTB);
+        await this.handleNotifCMD(data2Send[i].dbState as unknown as DbState, data2Send[i].mycollection, data2Send[i].field_id, data2Send[i].userData, data2Send[i].usert_id, data2Send[i].data, data2Send[i].save2DTB);
       }
-      this.deleteNotifListByIdt(staff__id);
+      // this.deleteNotifListByIdt(staff__id);
+      this.chatData.deleteNotifListByIdt(staff__id);
     }
   }
 
@@ -238,7 +270,7 @@ export class ChatGateway {
 
   async handleNotifCMD(
     dbState: DbState,
-    collection: string,
+    mycollection: string,
     field_id: string,
     userData: Payload,
     usert_id: string, // Staff o grupo de staff a quienes se dirige la accion
@@ -248,7 +280,7 @@ export class ChatGateway {
     let actualClient = await this.getById(userData.id);
     if (!actualClient) actualClient = this.getDefaId();
     const collectPayLoad: CollectionNotification = {
-      dbState, collection, field_id, user_id: userData.id, usert_id,
+      dbState, mycollection, field_id, user_id: userData.id, usert_id,
       date: Date.now(),
       data,
       OriginalsocketId: actualClient.socket_id
@@ -258,11 +290,13 @@ export class ChatGateway {
     if (!usert_id) return;
     const target = usert_id.split(';');
     target.forEach(async t => {
-      const tgClient = await this.getById(t);
+      const tgClient = this.getById(t);
       if (tgClient) {
         this.server.to(tgClient.socket_id).emit('dtb-notification', collectPayLoad);
       } else if (save2DTB) {
-        this.insertNotifList({ dbState, collection, field_id, userData, usert_id, data, date: Date.now(), save2DTB });
+        // this.insertNotifList({ dbState, mycollection, field_id, userData, usert_id, data, date: Date.now(), save2DTB });
+        // const dbstnum = Number(dbState);
+        await this.chatData.create({ dbState: DbState[dbState], mycollection, field_id, userData, usert_id, data, date: Date.now(), save2DTB });
       }
 
     })
@@ -303,7 +337,7 @@ export class ChatGateway {
 
   async handleChatBot(
     dbState: DbState,
-    collection: string,
+    mycollection: string,
     field_id: string,
     userData: Payload,
     usert_id: string, // Staff a quien se dirige la accion, if _broadcast_ a todos
@@ -315,7 +349,7 @@ export class ChatGateway {
 
     const soketList = await this.getAll();
     const collectPayLoad: CollectionNotification = {
-      dbState, collection, field_id, user_id: userData.id, usert_id,
+      dbState, mycollection, field_id, user_id: userData.id, usert_id,
       date: Date.now(),
       data,
       OriginalsocketId: actualClient.socket_id

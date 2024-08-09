@@ -97,6 +97,10 @@ export class CreatePollresultDto {
     @IsString()
     staffId?: string;
 
+    @IsString()
+    @IsNotEmpty()
+    staff_admin_id: string;
+
     @IsOptional()
     @IsString()
     staff_name?: string;

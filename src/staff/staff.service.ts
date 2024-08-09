@@ -7,10 +7,11 @@ import { Model } from 'mongoose';
 import { hash, compare } from 'bcrypt'
 import { JwtService } from '@nestjs/jwt';
 import { Workbook } from 'exceljs';
-import { ChatGateway, DbState } from 'src/chat/chat.gateway';
-import { Payload } from 'src/datatypes';
+import { ChatGateway } from 'src/chat/chat.gateway';
+import { DbState, Payload } from 'src/datatypes';
 import { Cron } from '@nestjs/schedule';
 import { MailService } from 'src/mail/mail.service';
+// import { DbState } from 'src/chat/schemas/chat.schema';
 // import { UpdateAppointDto } from './dto/update-appoint.dto';
 // import { DbState } from 'src/datatypes';
 

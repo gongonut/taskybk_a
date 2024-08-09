@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 // import { MongooseModule } from '@nestjs/mongoose';
 // import { Chat, ChatSchema } from './schemas/chat.schema';
-import { ChatGateway } from './chat.gateway';
+import { ChatGateway, ChatService } from './chat.gateway';
 import { ConfigModule } from '@nestjs/config';
 import { AuthChatServices } from './jwt.authChatservices';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -19,11 +19,8 @@ import { Chat, ChatSchema } from './schemas/chat.schema';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forFeature([
-      { name: Chat.name, schema: ChatSchema }
-    ])
-  ],
-  providers: [ChatGateway, AuthChatServices],
+    MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }])],
+  providers: [ChatService, ChatGateway, AuthChatServices],
   exports: [ChatGateway]
 })
 export class ChatModule { }

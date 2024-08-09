@@ -1,10 +1,11 @@
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { DbState } from "src/datatypes";
 
 export class CreateChatDto {
     
     @IsNotEmpty()
     @IsNumber()
-    dbState: number;
+    dbState: DbState;
 
     @IsNotEmpty()
     @IsString()

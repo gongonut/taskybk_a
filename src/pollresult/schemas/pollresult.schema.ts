@@ -84,6 +84,9 @@ export class PollResult {
     staff_id: string; // _id del Staff
 
     @Prop()
+    staff_admin_id: string; // administrador responsable
+
+    @Prop()
     staff__id?: string; // _id del staff
 
     @Prop()

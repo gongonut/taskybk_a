@@ -11,3 +11,11 @@ export interface Payload {
     name: string;
     rol: string[];
 }
+
+export enum DbState {
+    insert = 'insert',
+    update = 'update',
+    select = 'select',
+    delete = 'delete',
+    none = 'none'
+  }

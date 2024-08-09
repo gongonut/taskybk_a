@@ -4,8 +4,9 @@ import { UpdatePollresultDto } from './dto/update-pollresult.dto';
 import { PollResult } from './schemas/pollresult.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ChatGateway, DbState } from 'src/chat/chat.gateway';
-import { Payload } from 'src/datatypes';
+import { ChatGateway } from 'src/chat/chat.gateway';
+import { DbState, Payload } from 'src/datatypes';
+// import { DbState } from 'src/chat/schemas/chat.schema';
 // import { DbState } from 'src/datatypes';
 // import { CrmService } from 'src/crm/crm.service';
 
@@ -20,9 +21,9 @@ export class PollresultService {
 
   async create(createPollresultDto: CreatePollresultDto, user: Payload) {
     const newdPlresult = await new this.pollResultModel(createPollresultDto);
-    const { _id, staff__id, pollGrp_id, status } = newdPlresult;
+    const { _id, staff__id, pollGrp_id, status, staff_admin_id } = newdPlresult;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD(DbState.insert, 'pollresult', _id.toString(), user, staff__id, adata, false);
+    await this.chatcmd.handleNotifCMD(DbState.insert, 'pollresult', _id.toString(), user, `${staff__id};${staff_admin_id}`, adata, false);
     return newdPlresult.save();
   }
 
@@ -50,9 +51,9 @@ export class PollresultService {
   }
 
   async update(id: string, updatePollresultDto: UpdatePollresultDto, user: any) {
-    const { staff__id, pollGrp_id, status } = updatePollresultDto;
+    const { staff__id, pollGrp_id, status, staff_admin_id } = updatePollresultDto;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user.id, staff__id, adata, false);
+    await this.chatcmd.handleNotifCMD(DbState.update, 'pollresult', id, user.id, `${staff__id};${staff_admin_id}`, adata, false);
     if (updatePollresultDto.ended) {
 
     }
@@ -82,9 +83,10 @@ export class PollresultService {
 
   async remove(id: string, user: Payload) {
     const newdPlresult = await this.pollResultModel.findById(id);
-    const { _id, staff__id, pollGrp_id, status } = newdPlresult;
+    if (!newdPlresult) return;
+    const { _id, staff__id, pollGrp_id, status, staff_admin_id } = newdPlresult;
     const adata = { status, pollGrp_id }
-    await this.chatcmd.handleNotifCMD(DbState.delete, 'pollresult', _id.toString(), user, staff__id, adata, false);
+    await this.chatcmd.handleNotifCMD(DbState.delete, 'pollresult', _id.toString(), user, `${staff__id};${staff_admin_id}`, adata, false);
     return await this.pollResultModel.findByIdAndRemove(id);
   }
 
