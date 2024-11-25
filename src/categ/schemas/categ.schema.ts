@@ -4,6 +4,7 @@ import { Document } from 'mongoose';
 
 // Nested Schema
 
+/*
 @Schema({ _id: false })
 export class ChrOptionData extends Document {
     @Prop()
@@ -22,7 +23,7 @@ export class ChrOptionData extends Document {
     tax_p?: number;
 }
 export const ChrOptionDataSchema = SchemaFactory.createForClass(ChrOptionData);
-
+*/
 
 @Schema({ _id: false })
 export class ChrOption extends Document {
@@ -31,15 +32,27 @@ export class ChrOption extends Document {
     @Prop()
     id: string;
     @Prop()
+    name: string;
+    @Prop()
     title: string;
     @Prop()
     add2filter: boolean; // Agregar a las opciones de búsqueda y a la cotización
     @Prop()
+    add2subfilter: boolean; // Filtro local
+    @Prop()
+    subfilterlist?: string; // lista de afectador por el filtro local
+    @Prop()
     type: string; // NONE, radio, checkbox, select picture, select multi
     @Prop()
-    select: boolean; // NONE, radio, checkbox, select picture, select multi
+    selectlist?: string[]; // NONE, radio, checkbox, select picture, select multi
+    /*
     @Prop({ type: [ChrOptionDataSchema], default: [] })
     selectlist?: ChrOptionData[];
+    */
+    @Prop()
+    pict_proportion?: string; // presentación 3/4, 4/3, ...
+    @Prop()
+    pict_density?: number; // Densidad de la imagen
     // @Prop()
     // selected?: string;
     @Prop()

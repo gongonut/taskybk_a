@@ -59,6 +59,11 @@ export class CategController {
     return await this.categService.findList(filterQuery);
   }
 
+  @Get('subquerylist')
+  async findAllSubQShort() {
+    return await this.categService.findAllSubQuery();
+  }
+
   @Get()
   findAll() {
     return this.categService.findAll();

@@ -27,6 +27,27 @@ export class CategService {
     return { status: 200, data: result };
   }
 
+  async findAllSubQuery() {
+    
+    // return this.categModel.find({ "characterList.data": {$elemMatch: { "add2subfilter": true }} },{ "characterList.data.id": 1, "characterList.data.add2subfilter": 1, "_id": 0 });
+    // $filter: { input: "$instock", as: "item", cond: { $lte: ["$$item.qty", 15] }
+    // return this.categModel.find({ "characterList.data.add2subfilter": true },{ "characterList.data.id": 1, "characterList.data.add2subfilter": 1, "characterList.data.name": 1, });
+    // return this.categModel.find({ "characterList.data.add2subfilter": true },{ "characterList.data": 1 });
+    
+    const result = [];
+    (await this.categModel.find({ "characterList.data.add2subfilter": true },{ "characterList.data": 1 })).forEach(cat => {
+      cat.characterList.forEach(chrlist => {
+        chrlist.data.forEach(chrdata => {
+          if (chrdata.add2subfilter) {
+            // result.push({id: chrdata.id, name: chrdata.name, selectlist: chrdata.selectlist, title: chrdata.title, type: chrdata.type, subfilterlist: chrdata.subfilterlist});
+            result.push(chrdata);
+          }
+        })
+      });
+    });
+    return { status: 200, data: result };
+  }
+
   findList(filterQuery: any): Promise<Category[]> {
     const { catlist } = filterQuery;
     const options = {};
@@ -41,8 +62,6 @@ export class CategService {
   findOne(id: string) {
     return this.categModel.findById(id).exec();
   }
-
-  
 
   update(id: string, updateCategDto: UpdateCategDto) {
     return this.categModel.findByIdAndUpdate(id, updateCategDto, { new: true });

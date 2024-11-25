@@ -25,6 +25,7 @@ import { CategModule } from './categ/categ.module';
 import { IaResourceModule } from './ia-resource/ia-resource.module';
 import { IoFilesModule } from './io-files/io-files.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ProductxModule } from './productx/productx.module';
 
 @Module({
   imports: [
@@ -43,7 +44,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     ChatbotModule,
     CategModule,
     IaResourceModule,
-    IoFilesModule
+    IoFilesModule,
+    ProductxModule
     ],
   controllers: [AppController],
   providers: [AppService],

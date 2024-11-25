@@ -4,7 +4,7 @@ import { DbState } from "src/datatypes";
 export class CreateChatDto {
     
     @IsNotEmpty()
-    @IsNumber()
+    @IsString()
     dbState: DbState;
 
     @IsNotEmpty()

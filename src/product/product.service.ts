@@ -18,6 +18,7 @@ export class ProductService {
 
   async create(createProductDto: CreateProductDto) {
     const createdProduct = await new this.productModel(createProductDto);
+    // createdProduct.id = createProductDto._id;
     return await createdProduct.save();
   }
 
@@ -34,6 +35,7 @@ export class ProductService {
           'id': worksheetProd.getRow(i).getCell(1).text || '',
           'name': worksheetProd.getRow(i).getCell(2).text || '',
           'description': worksheetProd.getRow(i).getCell(3).text || '',
+          'parent_id': ''
         }
         thisArray.push(formData as unknown as Product);
       }

@@ -18,4 +18,4 @@ export enum DbState {
     select = 'select',
     delete = 'delete',
     none = 'none'
-  }
+}
