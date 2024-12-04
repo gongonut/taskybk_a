@@ -55,12 +55,25 @@ export class ProductService {
     return this.productModel.find().exec();
   }
 
+  findAllParent() {
+    // const all = await this.productModel.find();
+    // return all;
+    return this.productModel.find({ parent_id: '' }).exec();
+  }
+
+  findSubproduct(parent_id: string) {
+    // const all = await this.productModel.find();
+    // return all;
+    return this.productModel.find({ 'parent_id': parent_id }).exec();
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} product`;
   }
 
   update(id: string, updateProductDto: UpdateProductDto) {
-    return this.productModel.findByIdAndUpdate(id, updateProductDto, { new: true });
+    // return this.productModel.findByIdAndUpdate(id, updateProductDto, { new: true });
+    return this.productModel.replaceOne({ _id: id }, updateProductDto, { upsert: true });
   }
 
   remove(id: number) {

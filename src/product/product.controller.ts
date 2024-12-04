@@ -34,6 +34,16 @@ export class ProductController {
     return this.productService.findAll();
   }
 
+  @Get('parent')
+  findAllParent() {
+    return this.productService.findAllParent();
+  }
+
+  @Get('subproduct/:id')
+  findSubproduct(@Param('id') id: string) {
+    return this.productService.findSubproduct(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(+id);
