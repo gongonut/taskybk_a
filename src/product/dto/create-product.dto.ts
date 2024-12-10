@@ -34,7 +34,7 @@ export class CreateProductDto {
     @IsOptional()
     categIds?: object[]; // id de las categorías a las que pertenece para búsqueda
     @IsOptional()
-    opt2Prod?: object[];
+    optList?: object[];
     @IsOptional()
     prodXParentList?: string[]; // Ids de los productos padres
 }

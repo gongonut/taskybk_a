@@ -4,5 +4,9 @@ import { UpdateIoFileDto } from './dto/update-io-file.dto';
 
 @Injectable()
 export class IoFilesService {
+
+    remove(filename: string) {
+        // return this.IoFilesService.findByIdAndRemove(id);
+      }
   
 }

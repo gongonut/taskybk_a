@@ -52,7 +52,7 @@ export const ProductSchema = SchemaFactory.createForClass(Product);
 */
 
 @Schema({ _id: false })
-export class OptList extends Document {
+export class Opt2Prod extends Document {
     @Prop()
     catid: string; //  Id de la categía 
     @Prop()
@@ -61,8 +61,12 @@ export class OptList extends Document {
     opt_name: string; //  Nombre de ChrOption
     @Prop({ type: Object })
     value?: any; // el value de chtOption, título: "Rojo"
+    /*
+    @Prop({ type: Object })
+    selectlist?: string[]; // Activa selección
+    */
 }
-export const optListSchema = SchemaFactory.createForClass(OptList);
+export const Opt2ProdSchema = SchemaFactory.createForClass(Opt2Prod);
 
 // Parent Schema
 @Schema()
@@ -89,9 +93,11 @@ export class Product extends Document {
     opinion?: string;
     @Prop()
     categIds?: {key: string, value: any}[];
-    @Prop({ type: [optListSchema], default: [] })
-    optList?: OptList[];
+    @Prop({ type: [Opt2ProdSchema], default: [] })
+    optList?: Opt2Prod[];
     @Prop()
     prodXFilterList?: string[]; // Ids de los productos padres Ejemplo:ojyKt:XS, ojyKt:S, ojyKt:M, ojyKt:L, ojyKt:XL, ojyKt:XXL
+    @Prop()
+    pictures?: string[];
 }
 export const ProductSchema = SchemaFactory.createForClass(Product);

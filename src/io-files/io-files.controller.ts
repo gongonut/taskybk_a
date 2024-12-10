@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Res, UploadedFiles, UseInterceptors, } from '@nestjs/common';
+import { Controller, Get, Post, Param, Res, UploadedFiles, UseInterceptors, Delete, HttpException, Body, } from '@nestjs/common';
 import { IoFilesService } from './io-files.service';
 import { join } from 'path';
 import * as fs from 'fs';
@@ -46,5 +46,31 @@ export class IoFilesController {
     return { status: 200, message: resultpath }
   }
 
+  @Post('delfile')
+  async removeImageByName(@Body('filename') filename: string) {
+    // const upr = imagename.toUpperCase().split('_2d_');
+    const upr = filename.toUpperCase().replaceAll('_2D_', '/');
+    let apath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
+    if (process.env.DEV_STATUS === 'true') {
+      apath = join(__dirname, process.env.DEFA_DIR);
+    }
+    // apath = join(apath, upr[0], upr[1]);
+    apath = join(apath, upr);
+    try {
+      if (filename && fs.existsSync(apath)) {
+        await fs.unlinkSync(apath);
+        return { status: 200, message: 'File removed successfully' };
+      } else {
+        return { status: 400, message: 'File not found' };
+        // throw new HttpException('Error removing file', );
+      }
+      
+      // return { status: 200, message: 'File removed successfully' };
+      // console.log('File removed successfully');
+    } catch (error) {
+      // console.error('Error removing file:', error);
+      throw new HttpException('Error removing file', error);
+    }
+  }
 
 }
