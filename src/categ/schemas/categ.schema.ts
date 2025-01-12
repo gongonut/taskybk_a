@@ -92,6 +92,8 @@ export class Category extends Document {
     @Prop({ type: [CharacteristicsSchema], default: [] })
     characterList?: Characteristics[];
     @Prop()
+    shoppingConditions?: object[];
+    @Prop()
     indexCategory?: string[];
     @Prop()
     visible: boolean;

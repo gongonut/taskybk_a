@@ -17,6 +17,9 @@ export class CreateCategDto {
     characterList?: object[];
 
     @IsOptional()
+    shoppingConditions?: object[];
+
+    @IsOptional()
     indexCategory?: string[];
 
     @IsBoolean()

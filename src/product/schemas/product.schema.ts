@@ -59,8 +59,11 @@ export class Opt2Prod extends Document {
     optid: string; //  Id de ChrOption
     @Prop()
     opt_name: string; //  Nombre de ChrOption
+    @Prop()
+    source: string; //  Dato de origen
     @Prop({ type: Object })
     value?: any; // el value de chtOption, título: "Rojo"
+    
     /*
     @Prop({ type: Object })
     selectlist?: string[]; // Activa selección
@@ -92,12 +95,22 @@ export class Product extends Document {
     @Prop()
     opinion?: string;
     @Prop()
+    who_id?: string;
+    @Prop()
     categIds?: {key: string, value: any}[];
     @Prop({ type: [Opt2ProdSchema], default: [] })
-    optList?: Opt2Prod[];
+    // Ids de los productos padres Ejemplo:ojyKt:XS, ojyKt:S, ojyKt:M, ojyKt:L, ojyKt:XL, ojyKt:XXLprodMathCondition?: {optid: string, value: any, logic: string, operator: string}[]; // Condicion matemática para el producto
+    optList?: Opt2Prod[];    
     @Prop()
-    prodXFilterList?: string[]; // Ids de los productos padres Ejemplo:ojyKt:XS, ojyKt:S, ojyKt:M, ojyKt:L, ojyKt:XL, ojyKt:XXL
+    // Condicion matemática para el producto: Si se venden más de 5 descuento. Sigrega este producto, suma 5% de descuento
+    prodXFilterList?: string[];
+    @Prop()
+    shoppingConditions?: {object}[]; 
     @Prop()
     pictures?: string[];
+    @Prop()
+    pict_proportion?: string; // presentación 3/4, 4/3, ... Lo toma de ChrOption
+    @Prop()
+    pict_density?: number; // Densidad de la imagen Lo toma de ChrOption
 }
 export const ProductSchema = SchemaFactory.createForClass(Product);

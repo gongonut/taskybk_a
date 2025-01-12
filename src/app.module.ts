@@ -25,6 +25,8 @@ import { CategModule } from './categ/categ.module';
 import { IaResourceModule } from './ia-resource/ia-resource.module';
 import { IoFilesModule } from './io-files/io-files.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { SellModule } from './buy/sell.module';
+// import { SellModule } from './sell/sell.module';
 
 @Module({
   imports: [
@@ -44,6 +46,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     CategModule,
     IaResourceModule,
     IoFilesModule,
+    SellModule,
     ],
   controllers: [AppController],
   providers: [AppService],

@@ -31,10 +31,22 @@ export class CreateProductDto {
     @IsOptional()
     @IsString()
     opinion?: string;
+    @IsString()
+    who_id?: string;
     @IsOptional()
     categIds?: object[]; // id de las categorías a las que pertenece para búsqueda
     @IsOptional()
     optList?: object[];
     @IsOptional()
-    prodXParentList?: string[]; // Ids de los productos padres
+    prodXFilterList?: string[]; // Ids de los productos padres Ejemplo:ojyKt:XS, ojyKt:S, ojyKt:M, ojyKt:L, ojyKt:XL, ojyKt:XXL
+    @IsOptional()
+    shoppingConditions?: object[];
+    @IsOptional()
+    pictures?: string[];
+    @IsOptional()
+    @IsString()
+    pict_proportion?: string; // presentación 3/4, 4/3, ... Lo toma de ChrOption
+    @IsOptional()
+    @IsString()
+    pict_density?: number; // Densidad de la imagen Lo toma de ChrOption
 }
