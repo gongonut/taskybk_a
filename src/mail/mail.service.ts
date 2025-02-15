@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { MailerService } from '@nestjs-modules/mailer';
-import puppeteer from "puppeteer";
+// import puppeteer from "puppeteer";
+// https://echobind.com/post/browserless-puppeteer OJO
+import puppeteer from 'puppeteer-core';
 
 @Injectable()
 export class MailService {
@@ -79,17 +81,14 @@ export class MailService {
         status: 'Finalizada',
         date: datestr
       },
-      attachments: [{ filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }]
+      attachments: [{ filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: Buffer.from(pdf) }]
     })
     // return { status: 200, message: 'MAIL_SENDED' }
   }
 
   async html2pdf(html: string, options = {}) {
     try {
-      const browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
+      const browser = await this.getBrowser();
       const page = await browser.newPage();
       await page.setContent(html);
       const buffer = await page.pdf({
@@ -149,4 +148,20 @@ export class MailService {
     return `This action removes a #${id} email`;
   }
   */
+
+  private async getBrowser() {
+    if (process.env.BROWSER_WS_ENDPOINT) {
+      // Use Browserless for staging and production
+      return await puppeteer.connect({
+        browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
+      });
+    } else {
+      // Fallback to local Chrome instance if BROWSER_WS_ENDPOINT is not set for local development
+      return await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--headless=new'],
+        ignoreDefaultArgs: ['--disable-extensions'],
+      });
+    }
+  };
 }
