@@ -22,7 +22,7 @@ export class CategService {
   async findAllShort() {
     const result = [];
     (await this.categModel.find()).forEach(cat => {
-      result.push({_id: cat._id, title: cat.name, parentIndex: cat.indexCategory, visible: cat.visible})
+      result.push({_id: cat._id, title: cat.name, parentIndex: cat.indexCategory, visible: cat.visible, picture: cat.picture || ''})
     });
     return { status: 200, data: result };
   }

@@ -22,6 +22,9 @@ export class CreateCategDto {
     @IsOptional()
     indexCategory?: string[];
 
+    @IsOptional()
+    catPos: string[];
+
     @IsBoolean()
     @IsNotEmpty()
     visible: boolean;
