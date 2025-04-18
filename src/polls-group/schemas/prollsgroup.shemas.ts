@@ -131,6 +131,9 @@ export class PollGroups {
 
     @Prop({ type: Object })
     defa_values?: any;
+
+    @Prop({ type: Object })
+    evidenceValues?: any
     
     @Prop()
     exported: boolean;

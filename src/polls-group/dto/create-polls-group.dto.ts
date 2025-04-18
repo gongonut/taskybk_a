@@ -157,6 +157,9 @@ export class CreatePollsGroupDto {
     @IsOptional()
     defa_values?: { [index: string]: any };
 
+    @IsOptional()
+    evidenceValues?: { [index: string]: any };
+
     @IsNotEmpty()
     @IsBoolean()
     exported: boolean;
