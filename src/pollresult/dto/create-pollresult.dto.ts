@@ -136,8 +136,9 @@ export class CreatePollresultDto {
     @IsOptional()
     metaValues?: any;
 
-    @IsOptional()
-    evidenceValues?: any;
+    @IsNotEmpty()
+    //evidenceValues: any;
+    evidenceValues: { [index: string]: any };
 
     @IsOptional()
     attachfiles?: string[];

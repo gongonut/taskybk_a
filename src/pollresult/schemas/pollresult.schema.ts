@@ -122,8 +122,7 @@ export class PollResult {
     metaValues?: { [index: string]: any };
 
     @Prop({ type: Object })
-    evidenceValues?: { [index: string]: any };
-
+    evidenceValues: { [index: string]: any };
 
     @Prop()
     attachfiles?: string[];
