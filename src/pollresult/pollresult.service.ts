@@ -207,7 +207,7 @@ export class PollresultService {
           geoLocEnd: pr.geoLocEnd,
           tasker_name: pr.staff_name || 'Sin nombre',
           ...pr.values,
-          ...pr.evidenceValues
+          // ...pr.evidenceValues
         }
         result.push(item);
         // headResult = { ...headResult, ...item }
