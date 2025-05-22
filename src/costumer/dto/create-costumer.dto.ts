@@ -64,4 +64,7 @@ export class CreateCostumerDto {
 
     @IsOptional()
     geoLoc?: { lat: number, lng: number };
+
+    @IsNotEmpty()
+    ownertype: string[];
 }

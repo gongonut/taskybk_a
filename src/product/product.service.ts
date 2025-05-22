@@ -76,7 +76,7 @@ export class ProductService {
     return this.productModel.replaceOne({ _id: id }, updateProductDto, { upsert: true });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    return await this.productModel.findByIdAndRemove(id);
   }
 }

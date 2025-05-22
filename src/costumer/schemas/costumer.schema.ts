@@ -38,6 +38,8 @@ export class Costumer {
     zip?: string;
     @Prop({ type: Object })
     geoLoc?: any;
+    @Prop()
+    ownertype: string[];
 }
 
 export const CostumerSchema = SchemaFactory.createForClass(Costumer);

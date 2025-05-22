@@ -62,7 +62,9 @@ export class Opt2Prod extends Document {
     @Prop()
     source: string; //  Dato de origen
     @Prop({ type: Object })
-    value?: any; // el value de chtOption, título: "Rojo"
+    value?: any; // el value de chtOption, título: "Rojo". value solo funciona como label
+    @Prop({ type: Object })
+    lookup?: any; // Campo de búsqueda
     
     /*
     @Prop({ type: Object })
@@ -95,7 +97,11 @@ export class Product extends Document {
     @Prop()
     opinion?: string;
     @Prop()
-    who_id?: string;
+    prod_owner?: string;
+    @Prop()
+    prod_owner1?: string;
+    @Prop()
+    prod_owner2?: string;
     @Prop()
     categIds?: {key: string, value: any}[];
     @Prop({ type: [Opt2ProdSchema], default: [] })

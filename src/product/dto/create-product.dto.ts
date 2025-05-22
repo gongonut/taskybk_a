@@ -32,7 +32,11 @@ export class CreateProductDto {
     @IsString()
     opinion?: string;
     @IsString()
-    who_id?: string;
+    prod_owner?: string;
+    @IsString()
+    prod_owner1?: string;
+    @IsString()
+    prod_owner2?: string;
     @IsOptional()
     categIds?: object[]; // id de las categorías a las que pertenece para búsqueda
     @IsOptional()
