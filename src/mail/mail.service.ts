@@ -42,7 +42,8 @@ export class MailService {
 
     // const pdf = await this.html2pdf(emailDto.html);
     // attach = { filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }
-    const datestr = new Date(emailDto.data['date']).toLocaleString('es-CO', { 'dateStyle': 'short', 'timeStyle': 'short', 'hour12': true })
+    // const datestr = new Date(emailDto.data['date']).toLocaleString('es-CO', { 'dateStyle': 'short', 'timeStyle': 'short', 'hour12': true })
+    const datestr = emailDto.data['date'];
     const maillist = emailDto.to.split(';').join(',');
     // console.log(`${process.env.SMPT_EMAIL_LONG}--${process.env.EMAIL_USER} -- ${process.env.EMAIL_PASS_16}`);
     return await this.mails.sendMail({
@@ -66,7 +67,7 @@ export class MailService {
 
     const pdf = await this.html2pdf(emailDto.html);
     // attach = { filename: `${emailDto.data['activity_name'] || 'Actividad'}.pdf`, content: pdf }
-    const datestr = new Date(emailDto.data['date']).toLocaleString('es-CO', { 'dateStyle': 'short', 'timeStyle': 'short', 'hour12': true })
+    const datestr = emailDto.data['date'];
     const maillist = emailDto.to.split(';').join(',');
     // console.log(`${process.env.SMPT_EMAIL_LONG}--${process.env.EMAIL_USER} -- ${process.env.EMAIL_PASS_16}`);
     return await this.mails.sendMail({

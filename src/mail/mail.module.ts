@@ -21,7 +21,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         },
       },
       defaults: {
-        from: '"No Reply" <tasky.digital@gmail.com>',
+        from: '"Tasky updates" <tasky.digital@gmail.com>',
       },
       template: {
         dir: join(__dirname, 'templates'),
