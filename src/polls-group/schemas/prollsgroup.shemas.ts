@@ -137,6 +137,9 @@ export class PollGroups {
     
     @Prop()
     exported: boolean;
+
+    @Prop()
+    jsonataSavedQueries?: string;
     
 }
 

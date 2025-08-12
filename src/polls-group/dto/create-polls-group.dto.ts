@@ -163,5 +163,8 @@ export class CreatePollsGroupDto {
     @IsNotEmpty()
     @IsBoolean()
     exported: boolean;
-    
+
+    @IsOptional()
+    @IsString()
+    jsonataSavedQueries?: string;
 }
